@@ -1,0 +1,69 @@
+/*!*********************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].use[2]!./src/scss/main.scss ***!
+  \*********************************************************************************************************************************************************************/
+.cbo-chickenplayer {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-bottom: 56.25%;
+}
+.cbo-chickenplayer iframe,
+.cbo-chickenplayer .dailymotion-player-root,
+.cbo-chickenplayer .player-cover {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
+}
+.cbo-chickenplayer .player-cover {
+  background: black;
+  transition: transform 0.5s cubic-bezier(0.85, 0, 0.15, 1);
+}
+.cbo-chickenplayer .player-cover img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.75;
+}
+.cbo-chickenplayer .player-cover .cover-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  color: black;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.cbo-chickenplayer.player--loading .cover-button .button-icon {
+  display: none;
+}
+.cbo-chickenplayer.player--loading .cover-button .button-spinner {
+  display: block;
+}
+.cbo-chickenplayer.player--playing .player-cover {
+  transform: translateY(-100%);
+}
+
+@media (hover: hover) {
+  .cbo-chickenplayer .cover-button:hover {
+    background: black;
+    color: white;
+  }
+}
+
+/*# sourceMappingURL=main.css.map*/
