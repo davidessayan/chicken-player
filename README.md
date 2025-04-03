@@ -160,4 +160,4 @@ npm run build
 
 ## Licence
 
-ISC 
+MIT 
