@@ -27,25 +27,56 @@ npm install chicken-player
 ### Configuration de base
 
 ```html
-<div class="my-player" data-type="youtube" data-id="VIDEO_ID" id="player-1"></div>
+<div class="chicken-player" data-type="youtube" data-id="VIDEO_ID" id="player-1"></div>
 ```
 
 ### Initialisation
 
 ```javascript
-import chickenPlayer from 'chicken-player';
+import ChickenPlayer from 'chicken-player';
 
 // Configuration par défaut
-chickenPlayer.init();
+const player = new ChickenPlayer();
+player.init();
 
 // Configuration personnalisée
-chickenPlayer.init({
-  selector: '.my-player',
+const player = new ChickenPlayer({
+  selector: '.chicken-player',
+  player: {
+    width: 800,
+    height: 450,
+    youtube: {
+      host: 'https://www.youtube-nocookie.com',
+      playerVars: {
+        modestbranding: 1,
+        showinfo: 0,
+        controls: 1,
+        iv_load_policy: 3,
+        fs: 1,
+        rel: 0,
+        loop: 0,
+        mute: 0
+      }
+    },
+    vimeo: {
+      muted: false,
+      loop: false
+    },
+    dailymotion: {
+      playerId: 'yourDailymotionPlayerId',
+      params: {
+        startTime: 0,
+        scaleMode: 'fit',
+        loop: false,
+        mute: false
+      }
+    }
+  },
   classes: {
     wrapper: 'cbo-chickenplayer',
     cover: 'player-cover',
     button: 'cover-button',
-    buttonIcon: 'icon icon-play',
+    buttonIcon: 'button-icon',
     buttonSpinner: 'button-spinner',
     close: 'player-close',
     statePlaying: 'player--playing',
@@ -58,6 +89,7 @@ chickenPlayer.init({
     height: 400
   }
 });
+player.init();
 ```
 
 ## Support des plateformes
@@ -65,19 +97,19 @@ chickenPlayer.init({
 ### YouTube
 
 ```html
-<div class="my-player" data-type="youtube" data-id="VIDEO_ID" id="player-1"></div>
+<div class="chicken-player" data-type="youtube" data-id="VIDEO_ID" id="player-1"></div>
 ```
 
 ### Dailymotion
 
 ```html
-<div class="my-player" data-type="dailymotion" data-id="VIDEO_ID" id="player-1"></div>
+<div class="chicken-player" data-type="dailymotion" data-id="VIDEO_ID" id="player-1"></div>
 ```
 
 ### Vimeo
 
 ```html
-<div class="my-player" data-type="vimeo" data-id="VIDEO_ID" id="player-1"></div>
+<div class="chicken-player" data-type="vimeo" data-id="VIDEO_ID" id="player-1"></div>
 ```
 
 ## Événements
@@ -91,9 +123,24 @@ Le player émet les événements suivants :
 
 | Option | Type | Description | Valeur par défaut |
 |--------|------|-------------|------------------|
-| selector | string | Sélecteur CSS pour les éléments player | '.my-player' |
+| selector | string | Sélecteur CSS pour les éléments player | '.chicken-player' |
+| player | object | Configuration des players | Voir la documentation |
 | classes | object | Classes CSS personnalisables | Voir la documentation |
 | picture | object | Configuration de l'image de couverture | Voir la documentation |
+
+### Configuration des players
+
+#### YouTube
+- `host` : URL de l'API YouTube
+- `playerVars` : Paramètres du player YouTube (voir [documentation YouTube](https://developers.google.com/youtube/player_parameters))
+
+#### Vimeo
+- `muted` : Lecture en sourdine
+- `loop` : Lecture en boucle
+
+#### Dailymotion
+- `playerId` : ID du player
+- `params` : Paramètres du player (voir [documentation Dailymotion](https://developers.dailymotion.com/guides/getting-started-with-web-sdk/))
 
 ## Développement
 
