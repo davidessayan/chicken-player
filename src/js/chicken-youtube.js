@@ -1,116 +1,91 @@
-const chickenYoutube = {
-  apiReady: false,
-  tempPlayerUid: null,
-  tempPlayerId: null,
+/**
+ * Chicken Player - YouTube Implementation
+ * @author David Essayan
+ * @version 1.0.0
+ * @description YouTube video player implementation
+ */
 
-  videos: [],
-  timers: [],
+import ChickenPlayerBase from './chicken-player-base';
 
-  config: {},
-
-  initPlayer: function (id, uid, config) {
-    if (!this.apiReady) {
-      this.tempPlayerUid = uid;
-      this.tempPlayerId = id;
-      this.config = config;
-      this.initApi();
-    } else {
-      this.attemptPlayer(uid, id);
-    }
-  },
-
-  initApi: function () {
+class ChickenYoutube extends ChickenPlayerBase {
+  /**
+   * Initialize the YouTube API
+   */
+  initApi() {
     const tag = document.createElement("script");
     tag.src = "//www.youtube.com/iframe_api";
 
     const firstScriptTag = document.getElementsByTagName("script")[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  },
-
-  createPlayer: function (uid, id) {
-    console.log('createPlayer')
-    if (!chickenYoutube.videos[uid]) {
-      console.log('go')
-      chickenYoutube.videos[uid] = new YT.Player(uid, {
-        height: "169",
-        width: "300",
-        videoId: id,
-        host: 'https://www.youtube-nocookie.com',
-        playerVars: {
-          modestbranding: 1,
-          showinfo: 0,
-          controls: 1,
-          iv_load_policy: 3,
-          fs: 1
-        },
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
-        }
-      });
-    }
-
-    function onPlayerReady() {
-      const player = document.querySelector('#' + uid);
-      const wrapperSelector = `.${chickenYoutube.config.classes.wrapper}`;
-      const wrapper = player.closest(wrapperSelector);
-
-      // Custom events for player state changes
-      player.addEventListener('chickenPlayer.play', function () {
-        console.log('play event');
-        wrapper.classList.remove(chickenYoutube.config.classes.stateLoading);
-        wrapper.classList.add(chickenYoutube.config.classes.statePlaying);
-      });
-
-      player.addEventListener('chickenPlayer.stop', function () {
-        wrapper.classList.remove(chickenYoutube.config.classes.statePlaying);
-      });
-
-      // Start the player
-      chickenYoutube.startPlayer(uid);
-    }
-
-    function onPlayerStateChange(event) {
-      if (event.data == 0 || event.data == 2) {
-        chickenYoutube.timers[uid] = setTimeout(function () {
-          document.querySelector('#' + uid).dispatchEvent(chickenYoutube.config.events.stop);
-        }, 1000);
-      }
-
-      if (event.data == 1) {
-        console.log('play', document.querySelector('#' + uid));
-        clearTimeout(chickenYoutube.timers[uid]);
-        document.querySelector('#' + uid).dispatchEvent(chickenYoutube.config.events.play);
-      }
-    }
-  },
-
-  attemptPlayer: function (uid, id) {
-    console.log(uid, id)
-    if (chickenYoutube.videos[uid]) {
-      setTimeout(function () {
-        chickenYoutube.startPlayer(uid);
-      }, 1500);
-    } else {
-      chickenYoutube.createPlayer(uid, id);
-    }
-  },
-
-  stopPlayer: function (uid) {
-    document.querySelector('#' + uid).dispatchEvent(chickenYoutube.config.events.stop);
-    chickenYoutube.videos[uid].stopVideo();
-  },
-
-  startPlayer: function (uid) {
-    document.querySelector('#' + uid).dispatchEvent(chickenYoutube.config.events.play);
-    chickenYoutube.videos[uid].playVideo();
   }
-};
+
+  /**
+   * Create a new YouTube player instance
+   * @param {string} uid - Player unique ID
+   * @param {string} id - Video ID
+   */
+  createPlayer(uid, id) {
+    if (!this.videos[uid]) {
+      this.videos[uid] = new YT.Player(uid, {
+        ...{
+          height: this.config.player.height,
+          width: this.config.player.width,
+          videoId: id,
+          host: this.config.player.youtube.host,
+          events: {
+            onReady: () => this.onPlayerReady(uid),
+            onStateChange: (event) => this.onYouTubeStateChange(uid, event)
+          }
+        },
+        ...this.config.player.youtube
+      });
+    }
+  }
+
+  /**
+   * Handle YouTube specific state changes
+   * @param {string} uid - Player unique ID
+   * @param {Object} event - YouTube player event
+   */
+  onYouTubeStateChange(uid, event) {
+    const player = document.querySelector(`#${uid}`);
+
+    if (event.data === 0 || event.data === 2) {
+      this.timers[uid] = setTimeout(() => {
+        player.dispatchEvent(this.config.events.stop);
+      }, 1000);
+    }
+
+    if (event.data === 1) {
+      clearTimeout(this.timers[uid]);
+      player.dispatchEvent(this.config.events.play);
+    }
+  }
+
+  /**
+   * Stop the YouTube player
+   * @param {string} uid - Player unique ID
+   */
+  stopPlayer(uid) {
+    document.querySelector(`#${uid}`).dispatchEvent(this.config.events.stop);
+    this.videos[uid].stopVideo();
+  }
+
+  /**
+   * Start the YouTube player
+   * @param {string} uid - Player unique ID
+   */
+  startPlayer(uid) {
+    document.querySelector(`#${uid}`).dispatchEvent(this.config.events.play);
+    this.videos[uid].playVideo();
+  }
+}
+
+const chickenYoutube = new ChickenYoutube();
 
 export default chickenYoutube;
 
-/* After Youtube API init */
-
+/* After YouTube API init */
 window.onYouTubeIframeAPIReady = function () {
   chickenYoutube.apiReady = true;
   chickenYoutube.attemptPlayer(

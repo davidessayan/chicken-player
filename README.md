@@ -2,6 +2,8 @@
 
 Un lecteur vidéo simple et léger multiplateforme qui supporte YouTube, Dailymotion et Vimeo.
 
+![Chicken Player Logo](https://github.com/davidessayan/chicken-player/blob/main/logo.png?raw=true)
+
 ## Installation
 
 ### Via npm
