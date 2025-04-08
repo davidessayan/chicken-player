@@ -11,9 +11,15 @@
 
 <body>
 
-	<div class="chicken-player" data-id="u31qwQUeGuM" data-type="youtube" id="player_unique_id_youtube"></div>
-	<div class="chicken-player" data-id="x9gp4v0" data-type="dailymotion" id="player_unique_id_dailymotion"></div>
-	<div class="chicken-player" data-id="1017406920" data-type="vimeo" id="player_unique_id_vimeo"></div>
+	<div class="cbo-chickenplayer" data-id="u31qwQUeGuM" data-type="youtube" data-uid="player_unique_id_youtube">
+		<img src="https://placehold.co/600x400" width="600" height="400" alt="" loading="lazy">
+	</div>
+	<div class="cbo-chickenplayer" data-id="x9gp4v0" data-type="dailymotion" data-uid="player_unique_id_dailymotion">
+		<img src="https://placehold.co/600x400" width="600" height="400" alt="" loading="lazy">
+	</div>
+	<div class="cbo-chickenplayer" data-id="1017406920" data-type="vimeo" data-uid="player_unique_id_vimeo">
+		<img src="https://placehold.co/600x400" width="600" height="400" alt="" loading="lazy">
+	</div>
 
 	<script src="js/main.js"></script>
 
@@ -21,7 +27,7 @@
 	<script>
 		// La fonction est maintenant disponible globalement
 		document.addEventListener('DOMContentLoaded', function () {
-			chickenPlayer();
+			new ChickenPlayer();
 		});
 	</script>
 </body>

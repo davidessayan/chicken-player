@@ -1,12 +1,13 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode !== 'production';
   
-  return {
+  // Configuration principale (UMD)
+  const mainConfig = {
     entry: {
       main: [
         './src/js/index.js',
@@ -91,4 +92,7 @@ module.exports = (env, argv) => {
       hot: true
     }
   };
+
+  // Retourner les deux configurations
+  return [mainConfig];
 };

@@ -41,7 +41,6 @@ player.init();
 
 // Configuration personnalisée
 const player = new ChickenPlayer({
-  selector: '.chicken-player',
   player: {
     width: 800,
     height: 450,
@@ -123,7 +122,6 @@ Le player émet les événements suivants :
 
 | Option | Type | Description | Valeur par défaut |
 |--------|------|-------------|------------------|
-| selector | string | Sélecteur CSS pour les éléments player | '.chicken-player' |
 | player | object | Configuration des players | Voir la documentation |
 | classes | object | Classes CSS personnalisables | Voir la documentation |
 | picture | object | Configuration de l'image de couverture | Voir la documentation |

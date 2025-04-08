@@ -96,313 +96,6 @@ if (window.dailymotion === undefined) {
 
 /***/ }),
 
-/***/ "./src/js/chicken-init.js":
-/*!********************************!*\
-  !*** ./src/js/chicken-init.js ***!
-  \********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _chicken_dailymotion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chicken-dailymotion */ "./src/js/chicken-dailymotion.js");
-/* harmony import */ var _chicken_youtube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chicken-youtube */ "./src/js/chicken-youtube.js");
-/* harmony import */ var _chicken_vimeo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chicken-vimeo */ "./src/js/chicken-vimeo.js");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-/**
- * Chicken Player - Main Initialization
- * @author David Essayan
- * @version 1.0.0
- * @description Main initialization file for the Chicken Player library
- */
-
-
-
-
-
-/**
- * Default configuration for the player
- * @type {Object}
- */
-var defaultConfig = {
-  selector: '.chicken-player',
-  player: {
-    width: 600,
-    height: 400,
-    /* Youtube defaults */
-    /* See: https://developers.google.com/youtube/player_parameters */
-    youtube: {
-      host: 'https://www.youtube-nocookie.com',
-      playerVars: {
-        modestbranding: 1,
-        showinfo: 0,
-        controls: 1,
-        iv_load_policy: 3,
-        fs: 1,
-        rel: 0,
-        loop: 0,
-        mute: 0
-      }
-    },
-    /* Vimeo defaults */
-    /* See: https://developer.vimeo.com/player/sdk/embed */
-    vimeo: {
-      muted: false,
-      loop: false
-    },
-    /* Dailymotion defaults */
-    /* See: https://developers.dailymotion.com/guides/getting-started-with-web-sdk/ */
-    dailymotion: {
-      playerId: null,
-      params: {
-        startTime: 0,
-        scaleMode: 'fit',
-        loop: false,
-        mute: false
-      }
-    }
-  },
-  classes: {
-    wrapper: 'cbo-chickenplayer',
-    cover: 'player-cover',
-    button: 'cover-button',
-    buttonIcon: 'button-icon',
-    buttonSpinner: 'button-spinner',
-    close: 'player-close',
-    statePlaying: 'player--playing',
-    stateLoading: 'player--loading',
-    stateError: 'player--error'
-  },
-  picture: {
-    src: 'https://placehold.co/600x400',
-    width: 600,
-    height: 400
-  },
-  events: {
-    play: new Event('chickenPlayer.play'),
-    stop: new Event('chickenPlayer.stop')
-  }
-};
-
-/**
- * Main Chicken Player class
- */
-var ChickenPlayer = /*#__PURE__*/function () {
-  /**
-   * Initialize a new Chicken Player instance
-   * @param {Object} opts - User configuration options
-   */
-  function ChickenPlayer() {
-    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    _classCallCheck(this, ChickenPlayer);
-    this.config = this.mergeConfig(defaultConfig, opts);
-  }
-
-  /**
-   * Initialize the player with the current configuration
-   */
-  return _createClass(ChickenPlayer, [{
-    key: "init",
-    value: function init() {
-      var _this = this;
-      document.querySelectorAll(this.config.selector).forEach(function (el) {
-        var markup = _this.createMarkup(el);
-        el.parentNode.replaceChild(markup, el);
-      });
-      this.bindEvents();
-    }
-
-    /**
-     * Deep merge two configuration objects
-     * @param {Object} defaultConfig - Default configuration
-     * @param {Object} userConfig - User provided configuration
-     * @returns {Object} Merged configuration
-     */
-  }, {
-    key: "mergeConfig",
-    value: function mergeConfig(defaultConfig, userConfig) {
-      var merged = _objectSpread({}, defaultConfig);
-      for (var key in userConfig) {
-        if (userConfig.hasOwnProperty(key)) {
-          if (_typeof(userConfig[key]) === 'object' && userConfig[key] !== null && _typeof(defaultConfig[key]) === 'object' && defaultConfig[key] !== null) {
-            merged[key] = this.mergeConfig(defaultConfig[key], userConfig[key]);
-          } else {
-            merged[key] = userConfig[key];
-          }
-        }
-      }
-      return merged;
-    }
-
-    /**
-     * Create the player markup structure
-     * @param {HTMLElement} el - Original player element
-     * @returns {HTMLElement} Complete player markup
-     */
-  }, {
-    key: "createMarkup",
-    value: function createMarkup(el) {
-      // Create wrapper
-      var wrapper = document.createElement('div');
-      wrapper.className = this.config.classes.wrapper;
-
-      // Clone original player
-      var playerClone = el.cloneNode(true);
-
-      // Create cover elements
-      var cover = this.createCover();
-      var button = this.createButton();
-
-      // Assemble structure
-      wrapper.appendChild(playerClone);
-      wrapper.appendChild(cover);
-      cover.appendChild(button);
-      return wrapper;
-    }
-
-    /**
-     * Create the player cover element
-     * @returns {HTMLElement} Cover element
-     */
-  }, {
-    key: "createCover",
-    value: function createCover() {
-      var cover = document.createElement('div');
-      cover.className = this.config.classes.cover;
-      var image = document.createElement('img');
-      image.src = this.config.picture.src;
-      image.width = this.config.picture.width;
-      image.height = this.config.picture.height;
-      image.alt = '';
-      image.setAttribute('loading', 'lazy');
-      cover.appendChild(image);
-      return cover;
-    }
-
-    /**
-     * Create the play button element
-     * @returns {HTMLElement} Button element
-     */
-  }, {
-    key: "createButton",
-    value: function createButton() {
-      var button = document.createElement('button');
-      button.type = 'button';
-      button.className = this.config.classes.button;
-      var icon = document.createElement('span');
-      icon.className = this.config.classes.buttonIcon;
-      var spinner = document.createElement('div');
-      spinner.className = this.config.classes.buttonSpinner;
-
-      // Create spinner divs
-      for (var i = 0; i < 4; i++) {
-        var spinnerDiv = document.createElement('div');
-        spinner.appendChild(spinnerDiv);
-      }
-      button.appendChild(icon);
-      button.appendChild(spinner);
-      return button;
-    }
-
-    /**
-     * Bind event listeners to player elements
-     */
-  }, {
-    key: "bindEvents",
-    value: function bindEvents() {
-      var _this2 = this;
-      var wrapperSelector = ".".concat(this.config.classes.wrapper);
-      var playerSelector = this.config.selector;
-      var playSelector = ".".concat(this.config.classes.button);
-      var closeSelector = ".".concat(this.config.classes.close);
-      document.querySelectorAll(wrapperSelector).forEach(function (el) {
-        var player = el.querySelector(playerSelector);
-        var play = el.querySelector(playSelector);
-        var close = el.querySelector(closeSelector);
-        var type = player.getAttribute('data-type');
-        var id = player.getAttribute('data-id');
-        var uid = player.getAttribute('id');
-
-        // Play button click handler
-        play.addEventListener('click', function () {
-          el.classList.add(_this2.config.classes.stateLoading);
-          _this2.handlePlay(type, id, uid);
-        });
-
-        // Close button click handler
-        if (close) {
-          close.addEventListener('click', function () {
-            el.classList.remove(_this2.config.classes.statePlaying);
-            _this2.handleStop(type, id);
-          });
-        }
-      });
-    }
-
-    /**
-     * Handle play action based on player type
-     * @param {string} type - Player type (youtube, dailymotion, vimeo)
-     * @param {string} id - Video ID
-     * @param {string} uid - Player unique ID
-     */
-  }, {
-    key: "handlePlay",
-    value: function handlePlay(type, id, uid) {
-      switch (type) {
-        case 'youtube':
-          _chicken_youtube__WEBPACK_IMPORTED_MODULE_1__["default"].initPlayer(id, uid, this.config);
-          break;
-        case 'dailymotion':
-          _chicken_dailymotion__WEBPACK_IMPORTED_MODULE_0__["default"].initPlayer(id, uid, this.config);
-          break;
-        case 'vimeo':
-          _chicken_vimeo__WEBPACK_IMPORTED_MODULE_2__["default"].initPlayer(id, uid, this.config);
-          break;
-        default:
-          console.error('Unsupported player type:', type);
-          break;
-      }
-    }
-
-    /**
-     * Handle stop action based on player type
-     * @param {string} type - Player type (youtube, dailymotion, vimeo)
-     * @param {string} id - Video ID
-     */
-  }, {
-    key: "handleStop",
-    value: function handleStop(type, id) {
-      switch (type) {
-        case 'youtube':
-          _chicken_youtube__WEBPACK_IMPORTED_MODULE_1__["default"].stopPlayer(id);
-          break;
-        case 'dailymotion':
-          _chicken_dailymotion__WEBPACK_IMPORTED_MODULE_0__["default"].stopPlayer(id);
-          break;
-        case 'vimeo':
-          _chicken_vimeo__WEBPACK_IMPORTED_MODULE_2__["default"].stopPlayer(id);
-          break;
-        default:
-          console.error('Unsupported player type:', type);
-          break;
-      }
-    }
-  }]);
-}(); // Create and export singleton instance
-var chickenPlayer = new ChickenPlayer();
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (chickenPlayer);
-
-/***/ }),
-
 /***/ "./src/js/chicken-player-base.js":
 /*!***************************************!*\
   !*** ./src/js/chicken-player-base.js ***!
@@ -852,13 +545,342 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _chicken_init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chicken-init */ "./src/js/chicken-init.js");
+/* harmony import */ var _chicken_dailymotion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./chicken-dailymotion */ "./src/js/chicken-dailymotion.js");
+/* harmony import */ var _chicken_youtube__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chicken-youtube */ "./src/js/chicken-youtube.js");
+/* harmony import */ var _chicken_vimeo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./chicken-vimeo */ "./src/js/chicken-vimeo.js");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+/**
+ * Chicken Player - Main Initialization
+ * @author David Essayan
+ * @version 1.0.0
+ * @description Main initialization file for the Chicken Player library
+ */
 
-var chickenPlayer = function chickenPlayer() {
-  _chicken_init__WEBPACK_IMPORTED_MODULE_0__["default"].init();
+
+
+
+
+/**
+ * Default configuration for the player
+ * @type {Object}
+ */
+var defaultConfig = {
+  player: {
+    width: 600,
+    height: 400,
+    /* Youtube defaults */
+    /* See: https://developers.google.com/youtube/player_parameters */
+    youtube: {
+      host: 'https://www.youtube-nocookie.com',
+      playerVars: {
+        modestbranding: 1,
+        showinfo: 0,
+        controls: 1,
+        iv_load_policy: 3,
+        fs: 1,
+        rel: 0,
+        loop: 0,
+        mute: 0
+      }
+    },
+    /* Vimeo defaults */
+    /* See: https://developer.vimeo.com/player/sdk/embed */
+    vimeo: {
+      muted: false,
+      loop: false
+    },
+    /* Dailymotion defaults */
+    /* See: https://developers.dailymotion.com/guides/getting-started-with-web-sdk/ */
+    dailymotion: {
+      playerId: null,
+      params: {
+        startTime: 0,
+        scaleMode: 'fit',
+        loop: false,
+        mute: false
+      }
+    }
+  },
+  classes: {
+    wrapper: 'cbo-chickenplayer',
+    cover: 'chicken-cover',
+    button: 'cover-button',
+    buttonIcon: 'button-icon',
+    buttonSpinner: 'button-spinner',
+    close: 'player-close',
+    stateInit: 'player--init',
+    statePlaying: 'player--playing',
+    stateLoading: 'player--loading',
+    stateError: 'player--error'
+  },
+  placeholder: {
+    src: 'https://placehold.co/600x400',
+    width: 600,
+    height: 400
+  },
+  events: {
+    play: new Event('chickenPlayer.play'),
+    stop: new Event('chickenPlayer.stop')
+  }
 };
-window.chickenPlayer = chickenPlayer;
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (chickenPlayer);
+
+/**
+ * Main Chicken Player class
+ */
+var ChickenPlayer = /*#__PURE__*/function () {
+  /**
+   * Initialize a new Chicken Player instance
+   * @param {Object} opts - User configuration options
+   */
+  function ChickenPlayer() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    _classCallCheck(this, ChickenPlayer);
+    this.config = this.mergeConfig(defaultConfig, opts);
+    this.init();
+  }
+
+  /**
+   * Initialize the player with the current configuration
+   */
+  return _createClass(ChickenPlayer, [{
+    key: "init",
+    value: function init() {
+      var _this = this;
+      document.querySelectorAll(".".concat(this.config.classes.wrapper)).forEach(function (el) {
+        // Generate or get player ID
+        var uid = el.getAttribute('data-uid') || _this.generateUniqueId();
+
+        // Create chicken-player element
+        var playerEl = document.createElement('div');
+        playerEl.className = 'chicken-player'; // Use a fixed class name instead of selector
+        playerEl.id = uid;
+        playerEl.setAttribute('data-type', el.getAttribute('data-type'));
+        playerEl.setAttribute('data-id', el.getAttribute('data-id'));
+
+        // Create markup
+        var markup = _this.createMarkup(el, playerEl);
+
+        // Replace original element with new markup
+        el.parentNode.replaceChild(markup, el);
+      });
+      this.bindEvents();
+
+      // Add init state class to all players
+      document.querySelectorAll(".".concat(this.config.classes.wrapper)).forEach(function (el) {
+        el.classList.add(_this.config.classes.stateInit);
+      });
+    }
+
+    /**
+     * Generate a unique ID for player elements
+     * @returns {string} Unique ID
+     */
+  }, {
+    key: "generateUniqueId",
+    value: function generateUniqueId() {
+      return 'player_' + Math.random().toString(36).substring(2, 15);
+    }
+
+    /**
+     * Deep merge two configuration objects
+     * @param {Object} defaultConfig - Default configuration
+     * @param {Object} userConfig - User provided configuration
+     * @returns {Object} Merged configuration
+     */
+  }, {
+    key: "mergeConfig",
+    value: function mergeConfig(defaultConfig, userConfig) {
+      var merged = _objectSpread({}, defaultConfig);
+      for (var key in userConfig) {
+        if (userConfig.hasOwnProperty(key)) {
+          if (_typeof(userConfig[key]) === 'object' && userConfig[key] !== null && _typeof(defaultConfig[key]) === 'object' && defaultConfig[key] !== null) {
+            merged[key] = this.mergeConfig(defaultConfig[key], userConfig[key]);
+          } else {
+            merged[key] = userConfig[key];
+          }
+        }
+      }
+      return merged;
+    }
+
+    /**
+     * Create the player markup structure
+     * @param {HTMLElement} el - Original wrapper element
+     * @param {HTMLElement} playerEl - Player element to be inserted
+     * @returns {HTMLElement} Complete player markup
+     */
+  }, {
+    key: "createMarkup",
+    value: function createMarkup(el, playerEl) {
+      // Create wrapper (clone the original)
+      var wrapper = el.cloneNode(false);
+
+      // Create cover elements
+      var cover = this.createCover(el);
+      var button = this.createButton();
+
+      // Assemble structure
+      wrapper.appendChild(playerEl);
+      wrapper.appendChild(cover);
+      cover.appendChild(button);
+      return wrapper;
+    }
+
+    /**
+     * Create the player cover element
+     * @param {HTMLElement} el - Original player element
+     * @returns {HTMLElement} Cover element
+     */
+  }, {
+    key: "createCover",
+    value: function createCover(el) {
+      var cover = document.createElement('div');
+      cover.className = this.config.classes.cover;
+      var image = document.createElement('img');
+
+      // Get image from original element if it exists
+      var originalImage = el.querySelector('img');
+      if (originalImage) {
+        image.src = originalImage.src;
+        image.width = originalImage.width || this.config.placeholder.width;
+        image.height = originalImage.height || this.config.placeholder.height;
+        image.alt = originalImage.alt || '';
+      } else {
+        // Fallback to default configuration
+        image.src = this.config.placeholder.src;
+        image.width = this.config.placeholder.width;
+        image.height = this.config.placeholder.height;
+        image.alt = '';
+      }
+      image.setAttribute('loading', 'lazy');
+      cover.appendChild(image);
+      return cover;
+    }
+
+    /**
+     * Create the play button element
+     * @returns {HTMLElement} Button element
+     */
+  }, {
+    key: "createButton",
+    value: function createButton() {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = this.config.classes.button;
+      var icon = document.createElement('span');
+      icon.className = this.config.classes.buttonIcon;
+      var spinner = document.createElement('div');
+      spinner.className = this.config.classes.buttonSpinner;
+
+      // Create spinner divs
+      for (var i = 0; i < 4; i++) {
+        var spinnerDiv = document.createElement('div');
+        spinner.appendChild(spinnerDiv);
+      }
+      button.appendChild(icon);
+      button.appendChild(spinner);
+      return button;
+    }
+
+    /**
+     * Bind event listeners to player elements
+     */
+  }, {
+    key: "bindEvents",
+    value: function bindEvents() {
+      var _this2 = this;
+      var wrapperSelector = ".".concat(this.config.classes.wrapper);
+      var playerSelector = '.chicken-player'; // Use a fixed class name instead of selector
+      var playSelector = ".".concat(this.config.classes.button);
+      var closeSelector = ".".concat(this.config.classes.close);
+      document.querySelectorAll(wrapperSelector).forEach(function (el) {
+        var player = el.querySelector(playerSelector);
+        var play = el.querySelector(playSelector);
+        var close = el.querySelector(closeSelector);
+        var type = player.getAttribute('data-type');
+        var id = player.getAttribute('data-id');
+        var uid = player.id;
+
+        // Play button click handler
+        play.addEventListener('click', function () {
+          el.classList.add(_this2.config.classes.stateLoading);
+          _this2.handlePlay(type, id, uid);
+        });
+
+        // Close button click handler
+        if (close) {
+          close.addEventListener('click', function () {
+            el.classList.remove(_this2.config.classes.statePlaying);
+            _this2.handleStop(type, id);
+          });
+        }
+      });
+    }
+
+    /**
+     * Handle play action based on player type
+     * @param {string} type - Player type (youtube, dailymotion, vimeo)
+     * @param {string} id - Video ID
+     * @param {string} uid - Player unique ID
+     */
+  }, {
+    key: "handlePlay",
+    value: function handlePlay(type, id, uid) {
+      switch (type) {
+        case 'youtube':
+          _chicken_youtube__WEBPACK_IMPORTED_MODULE_1__["default"].initPlayer(id, uid, this.config);
+          break;
+        case 'dailymotion':
+          _chicken_dailymotion__WEBPACK_IMPORTED_MODULE_0__["default"].initPlayer(id, uid, this.config);
+          break;
+        case 'vimeo':
+          _chicken_vimeo__WEBPACK_IMPORTED_MODULE_2__["default"].initPlayer(id, uid, this.config);
+          break;
+        default:
+          console.error('Unsupported player type:', type);
+          break;
+      }
+    }
+
+    /**
+     * Handle stop action based on player type
+     * @param {string} type - Player type (youtube, dailymotion, vimeo)
+     * @param {string} id - Video ID
+     */
+  }, {
+    key: "handleStop",
+    value: function handleStop(type, id) {
+      switch (type) {
+        case 'youtube':
+          _chicken_youtube__WEBPACK_IMPORTED_MODULE_1__["default"].stopPlayer(id);
+          break;
+        case 'dailymotion':
+          _chicken_dailymotion__WEBPACK_IMPORTED_MODULE_0__["default"].stopPlayer(id);
+          break;
+        case 'vimeo':
+          _chicken_vimeo__WEBPACK_IMPORTED_MODULE_2__["default"].stopPlayer(id);
+          break;
+        default:
+          console.error('Unsupported player type:', type);
+          break;
+      }
+    }
+  }]);
+}(); // Expose ChickenPlayer globally for direct browser usage
+if (typeof window !== 'undefined') {
+  window.ChickenPlayer = ChickenPlayer;
+}
+
+// Export for ES6 modules
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ChickenPlayer);
 })();
 
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other entry modules.
