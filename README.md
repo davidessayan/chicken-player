@@ -158,4 +158,4 @@ npm run build
 
 ## Licence
 
-MIT 
+GNU GPLv3 
