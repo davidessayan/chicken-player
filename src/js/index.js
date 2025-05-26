@@ -8,6 +8,7 @@
 import chickenDailymotion from './chicken-dailymotion';
 import chickenYoutube from './chicken-youtube';
 import chickenVimeo from './chicken-vimeo';
+import chickenHtml5 from './chicken-html5';
 
 import '../scss/main.scss';
 
@@ -54,6 +55,13 @@ const defaultConfig = {
         loop: false,
         mute: false,
       }
+    },
+
+    /* HTML5 defaults */
+    html5: {
+      controls: true,
+      preload: 'metadata',
+      playsinline: true
     }
   },
   classes: {
@@ -246,8 +254,8 @@ class ChickenPlayer {
 
   /**
    * Handle play action based on player type
-   * @param {string} type - Player type (youtube, dailymotion, vimeo)
-   * @param {string} id - Video ID
+   * @param {string} type - Player type (youtube, dailymotion, vimeo, html5)
+   * @param {string} id - Video ID or URL
    * @param {string} uid - Player unique ID
    */
   handlePlay(type, id, uid) {
@@ -261,6 +269,9 @@ class ChickenPlayer {
       case 'vimeo':
         chickenVimeo.initPlayer(id, uid, this.config);
         break;
+      case 'html5':
+        chickenHtml5.initPlayer(id, uid, this.config);
+        break;
       default:
         console.error('Unsupported player type:', type);
         break;
@@ -269,8 +280,8 @@ class ChickenPlayer {
 
   /**
    * Handle stop action based on player type
-   * @param {string} type - Player type (youtube, dailymotion, vimeo)
-   * @param {string} id - Video ID
+   * @param {string} type - Player type (youtube, dailymotion, vimeo, html5)
+   * @param {string} id - Video ID or URL
    */
   handleStop(type, id) {
     switch (type) {
@@ -282,6 +293,9 @@ class ChickenPlayer {
         break;
       case 'vimeo':
         chickenVimeo.stopPlayer(id);
+        break;
+      case 'html5':
+        chickenHtml5.stopPlayer(id);
         break;
       default:
         console.error('Unsupported player type:', type);
