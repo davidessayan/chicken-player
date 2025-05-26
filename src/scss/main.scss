@@ -27,12 +27,11 @@
         height: 100%;
         object-fit: cover;
         object-position: center;
-        opacity: 0.75;
     }
 
     iframe,
     .dailymotion-player-root,
-    .chicken-cover {
+    .player-cover {
         position: absolute !important;
         top: 0;
         left: 0;
@@ -41,7 +40,7 @@
         padding: 0 !important;
     }
 
-    .chicken-cover {
+    .player-cover {
         transition: transform 0.5s cubic-bezier(0.85, 0, 0.15, 1);
 
         .cover-button {
@@ -122,7 +121,7 @@
     // Playing state 
 
     &.player--playing {
-        .chicken-cover {
+        .player-cover {
             transform: translateY(-100%);
         }
     }

@@ -9,11 +9,14 @@ import chickenDailymotion from './chicken-dailymotion';
 import chickenYoutube from './chicken-youtube';
 import chickenVimeo from './chicken-vimeo';
 
+import '../scss/main.scss';
+
 /**
  * Default configuration for the player
  * @type {Object}
  */
 const defaultConfig = {
+  selector: '.chicken-player',
   player: {
     width: 600,
     height: 400,
@@ -55,17 +58,17 @@ const defaultConfig = {
   },
   classes: {
     wrapper: 'cbo-chickenplayer',
-    cover: 'chicken-cover',
+    cover: 'player-cover',
     button: 'cover-button',
     buttonIcon: 'button-icon',
     buttonSpinner: 'button-spinner',
     close: 'player-close',
-    stateInit: 'player--init',
     statePlaying: 'player--playing',
     stateLoading: 'player--loading',
-    stateError: 'player--error'
+    stateError: 'player--error',
+    stateReady: 'player--ready'
   },
-  placeholder: {
+  picture: {
     src: 'https://placehold.co/600x400',
     width: 600,
     height: 400,
@@ -86,45 +89,23 @@ class ChickenPlayer {
    */
   constructor(opts = {}) {
     this.config = this.mergeConfig(defaultConfig, opts);
-    this.init();
+
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      this.init();
+    }
   }
 
   /**
    * Initialize the player with the current configuration
+   * Creates markup and binds events for all player elements
    */
   init() {
-    document.querySelectorAll(`.${this.config.classes.wrapper}`).forEach(el => {
-      // Generate or get player ID
-      const uid = el.getAttribute('data-uid') || this.generateUniqueId();
-      
-      // Create chicken-player element
-      const playerEl = document.createElement('div');
-      playerEl.className = 'chicken-player'; // Use a fixed class name instead of selector
-      playerEl.id = uid;
-      playerEl.setAttribute('data-type', el.getAttribute('data-type'));
-      playerEl.setAttribute('data-id', el.getAttribute('data-id'));
-      
-      // Create markup
-      const markup = this.createMarkup(el, playerEl);
-      
-      // Replace original element with new markup
+    document.querySelectorAll(`${this.config.selector}:not(.${this.config.classes.stateReady})`).forEach(el => {
+      const markup = this.createMarkup(el);
       el.parentNode.replaceChild(markup, el);
     });
 
     this.bindEvents();
-
-    // Add init state class to all players
-    document.querySelectorAll(`.${this.config.classes.wrapper}`).forEach(el => {
-      el.classList.add(this.config.classes.stateInit);
-    });
-  }
-
-  /**
-   * Generate a unique ID for player elements
-   * @returns {string} Unique ID
-   */
-  generateUniqueId() {
-    return 'player_' + Math.random().toString(36).substring(2, 15);
   }
 
   /**
@@ -156,20 +137,23 @@ class ChickenPlayer {
 
   /**
    * Create the player markup structure
-   * @param {HTMLElement} el - Original wrapper element
-   * @param {HTMLElement} playerEl - Player element to be inserted
+   * @param {HTMLElement} el - Original player element
    * @returns {HTMLElement} Complete player markup
    */
-  createMarkup(el, playerEl) {
-    // Create wrapper (clone the original)
-    const wrapper = el.cloneNode(false);
-    
+  createMarkup(el) {
+    // Create wrapper
+    const wrapper = document.createElement('div');
+    wrapper.className = this.config.classes.wrapper;
+
+    // Clone original player
+    const playerClone = el.cloneNode(true);
+
     // Create cover elements
-    const cover = this.createCover(el);
+    const cover = this.createCover();
     const button = this.createButton();
 
     // Assemble structure
-    wrapper.appendChild(playerEl);
+    wrapper.appendChild(playerClone);
     wrapper.appendChild(cover);
     cover.appendChild(button);
 
@@ -178,30 +162,17 @@ class ChickenPlayer {
 
   /**
    * Create the player cover element
-   * @param {HTMLElement} el - Original player element
    * @returns {HTMLElement} Cover element
    */
-  createCover(el) {
+  createCover() {
     const cover = document.createElement('div');
     cover.className = this.config.classes.cover;
 
     const image = document.createElement('img');
-    
-    // Get image from original element if it exists
-    const originalImage = el.querySelector('img');
-    if (originalImage) {
-      image.src = originalImage.src;
-      image.width = originalImage.width || this.config.placeholder.width;
-      image.height = originalImage.height || this.config.placeholder.height;
-      image.alt = originalImage.alt || '';
-    } else {
-      // Fallback to default configuration
-      image.src = this.config.placeholder.src;
-      image.width = this.config.placeholder.width;
-      image.height = this.config.placeholder.height;
-      image.alt = '';
-    }
-    
+    image.src = this.config.picture.src;
+    image.width = this.config.picture.width;
+    image.height = this.config.picture.height;
+    image.alt = '';
     image.setAttribute('loading', 'lazy');
 
     cover.appendChild(image);
@@ -237,35 +208,39 @@ class ChickenPlayer {
 
   /**
    * Bind event listeners to player elements
+   * Only binds events to elements that haven't been initialized yet
    */
   bindEvents() {
-    const wrapperSelector = `.${this.config.classes.wrapper}`;
-    const playerSelector = '.chicken-player'; // Use a fixed class name instead of selector
+    const playerSelector = this.config.selector;
     const playSelector = `.${this.config.classes.button}`;
     const closeSelector = `.${this.config.classes.close}`;
 
-    document.querySelectorAll(wrapperSelector).forEach(el => {
-      const player = el.querySelector(playerSelector);
-      const play = el.querySelector(playSelector);
-      const close = el.querySelector(closeSelector);
+    document.querySelectorAll(`${playerSelector}:not(.${this.config.classes.stateReady})`).forEach(el => {
+      const wrapper = el.parentElement;
 
-      const type = player.getAttribute('data-type');
-      const id = player.getAttribute('data-id');
-      const uid = player.id;
+      const play = wrapper.querySelector(playSelector);
+      const close = wrapper.querySelector(closeSelector);
+
+      const type = el.getAttribute('data-type');
+      const id = el.getAttribute('data-id');
+      const uid = el.getAttribute('id');
 
       // Play button click handler
       play.addEventListener('click', () => {
-        el.classList.add(this.config.classes.stateLoading);
+        wrapper.classList.add(this.config.classes.stateLoading);
         this.handlePlay(type, id, uid);
       });
 
       // Close button click handler
       if (close) {
         close.addEventListener('click', () => {
-          el.classList.remove(this.config.classes.statePlaying);
+          wrapper.classList.remove(this.config.classes.statePlaying);
           this.handleStop(type, id);
         });
       }
+
+      // Mark wrapper as ready to prevent re-initialization
+      wrapper.classList.add(this.config.classes.stateReady);
     });
   }
 
@@ -315,10 +290,4 @@ class ChickenPlayer {
   }
 }
 
-// Expose ChickenPlayer globally for direct browser usage
-if (typeof window !== 'undefined') {
-  window.ChickenPlayer = ChickenPlayer;
-}
-
-// Export for ES6 modules
 export default ChickenPlayer;

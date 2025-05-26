@@ -14,7 +14,7 @@ class ChickenVimeo extends ChickenPlayerBase {
   initApi() {
     const tag = document.createElement("script");
     tag.src = "//player.vimeo.com/api/player.js";
-    tag.onload = onVimeoReadyCallback;
+    tag.onload = window.onVimeoReadyCallback;
 
     const firstScriptTag = document.getElementsByTagName("script")[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);

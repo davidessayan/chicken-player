@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chicken Player Test</title>
+    <link rel="stylesheet" href="/dist/chicken-player.css?t=<?=Date.now()?>">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+        }
+
+        .test-block {
+            border: 1px solid #eee;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .switch-btns {
+            margin-bottom: 2rem;
+        }
+
+        .switch-btns button {
+            margin-right: 1rem;
+            padding: 0.5em 1.5em;
+        }
+
+        .mode-label {
+            font-size: 1.1em;
+            color: #888;
+            margin-left: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Chicken Player - Demo UMD & ESM</h1>
+    <div class="switch-btns">
+        <button id="btn-umd">UMD</button>
+        <button id="btn-esm">ESM</button>
+        <span class="mode-label" id="current-mode-label"></span>
+    </div>
+
+    <div id="mode-esm" class="test-block" style="display:none">
+        <h2>ESM (native import)</h2>
+        <div class="chicken-player-esm-1" data-type="youtube" data-id="IPfdLVxjJeo" id="player-esm-1"></div>
+        <div class="chicken-player-esm-2" data-type="youtube" data-id="RPM-NbDuHlM" id="player-esm-2"></div>
+        <div class="chicken-player-esm-2" data-type="vimeo" data-id="524933864" id="player-esm-3"></div>
+        <div class="chicken-player-esm-2" data-type="dailymotion" data-id="x9k8k0y" id="player-esm-4"></div>
+        <pre>import ChickenPlayer from '/dist/chicken-player.es.js'</pre>
+    </div>
+
+    <div id="mode-umd" class="test-block" style="display:none">
+        <h2>UMD (global window)</h2>
+        <div class="chicken-player-umd-1" data-type="youtube" data-id="IPfdLVxjJeo" id="player-umd-1"></div>
+        <div class="chicken-player-umd-2" data-type="youtube" data-id="RPM-NbDuHlM" id="player-umd-2"></div>
+        <div class="chicken-player-umd-2" data-type="vimeo" data-id="524933864" id="player-umd-3"></div>
+        <div class="chicken-player-umd-2" data-type="dailymotion" data-id="x9gp4v0" id="player-umd-4"></div>
+        <pre>&lt;script src="/dist/chicken-player.umd.js"&gt;&lt;/script&gt;</pre>
+    </div>
+
+    <hr>
+    <p>Modifie ce fichier pour tester différents cas d'intégration !</p>
+
+    <script>
+        // --- MODE DETECTION ---
+        function getMode() {
+            const url = new URL(window.location.href);
+            return url.searchParams.get('mode') === 'esm' ? 'esm' : 'umd';
+        }
+        function switchMode(mode) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('mode', mode);
+            url.searchParams.set('t', Date.now()); // cache bust
+            window.location.replace(url.toString());
+        }
+
+        // --- UI ---
+        const mode = getMode();
+        document.getElementById('mode-esm').style.display = (mode === 'esm') ? '' : 'none';
+        document.getElementById('mode-umd').style.display = (mode === 'umd') ? '' : 'none';
+        document.getElementById('current-mode-label').textContent = 'Mode: ' + mode.toUpperCase();
+
+        document.getElementById('btn-umd').onclick = () => switchMode('umd');
+        document.getElementById('btn-esm').onclick = () => switchMode('esm');
+
+        // --- DYNAMIC LOADING ---
+        const timestamp = Date.now();
+
+        if (mode === 'esm') {
+            // ESM: dynamic import
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.innerHTML = `
+        import ChickenPlayer from '/dist/chicken-player.es.js?t=${timestamp}';
+        window.playerESM1 = new ChickenPlayer({ selector: '.chicken-player-esm-1' });
+        window.playerESM2 = new ChickenPlayer({ selector: '.chicken-player-esm-2' });
+        console.log('[ChickenPlayer-ESM]', window.playerESM1, window.playerESM2);
+      `;
+            document.body.appendChild(script);
+        } else {
+            // UMD: append script tag
+            const script = document.createElement('script');
+            script.src = '/dist/chicken-player.umd.js?t=' + timestamp;
+            script.onload = () => {
+                if (window.ChickenPlayer) {
+                    window.playerUMD1 = new window.ChickenPlayer({ selector: '.chicken-player-umd-1' });
+                    window.playerUMD2 = new window.ChickenPlayer({ selector: '.chicken-player-umd-2' });
+                    console.log('[ChickenPlayer-UMD]', window.playerUMD1, window.playerUMD2);
+                } else {
+                    console.error('ChickenPlayer UMD not found');
+                }
+            };
+            document.body.appendChild(script);
+        }
+    </script>
+</body>
+
+</html>
