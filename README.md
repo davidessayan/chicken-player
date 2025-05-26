@@ -159,3 +159,5 @@ npm run build
 ## Licence
 
 GNU GPLv3 
+
+ChickenPlayer - Copyright &copy; 2025 - David Essayan
