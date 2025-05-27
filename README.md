@@ -1,12 +1,12 @@
 # Chicken Player
 
-Un lecteur vidéo simple et léger multiplateforme qui supporte YouTube, Dailymotion et Vimeo.
-
 ![Chicken Player Logo](https://github.com/davidessayan/chicken-player/blob/main/logo.png?raw=true)
+
+Un plugin JavaScript léger et flexible pour l'intégration de vidéos YouTube, Vimeo, Dailymotion et HTML5 dans vos projets web.
 
 ## Installation
 
-### Via npm
+### Via NPM
 
 ```bash
 npm install chicken-player
@@ -16,148 +16,139 @@ npm install chicken-player
 
 ```html
 <!-- CSS -->
-<link rel="stylesheet" href="https://unpkg.com/chicken-player/dist/css/main.css">
+<link rel="stylesheet" href="https://unpkg.com/chicken-player/dist/chicken-player.css">
 
 <!-- JavaScript -->
-<script src="https://unpkg.com/chicken-player/dist/js/main.js"></script>
+<script src="https://unpkg.com/chicken-player/dist/chicken-player.umd.js"></script>
 ```
 
 ## Utilisation
 
-### Configuration de base
+### Exemple basique
 
 ```html
-<div class="chicken-player" data-type="youtube" data-id="VIDEO_ID" id="player-1"></div>
+<!-- HTML -->
+<div class="chicken-player" data-type="youtube" data-id="VIDEO_ID"></div>
+
+<!-- JavaScript -->
+<script>
+  const player = new ChickenPlayer();
+</script>
 ```
 
-### Initialisation
+### Exemple avec configuration personnalisée
 
-```javascript
-import ChickenPlayer from 'chicken-player';
+```html
+<!-- HTML -->
+<div class="chicken-player" data-type="vimeo" data-id="VIDEO_ID"></div>
 
-// Configuration par défaut
-const player = new ChickenPlayer();
-player.init();
-
-// Configuration personnalisée
-const player = new ChickenPlayer({
-  player: {
-    width: 800,
-    height: 450,
-    youtube: {
-      host: 'https://www.youtube-nocookie.com',
-      playerVars: {
-        modestbranding: 1,
-        showinfo: 0,
-        controls: 1,
-        iv_load_policy: 3,
-        fs: 1,
-        rel: 0,
-        loop: 0,
-        mute: 0
+<!-- JavaScript -->
+<script>
+  const player = new ChickenPlayer({
+    selector: '.chicken-player',
+    player: {
+      width: 800,
+      height: 450,
+      vimeo: {
+        muted: true,
+        loop: true
       }
     },
-    vimeo: {
-      muted: false,
-      loop: false
-    },
-    dailymotion: {
-      playerId: 'yourDailymotionPlayerId',
-      params: {
-        startTime: 0,
-        scaleMode: 'fit',
-        loop: false,
-        mute: false
-      }
+    picture: {
+      src: 'path/to/thumbnail.jpg',
+      width: 800,
+      height: 450
     }
-  },
-  classes: {
-    wrapper: 'cbo-chickenplayer',
-    cover: 'player-cover',
-    button: 'cover-button',
-    buttonIcon: 'button-icon',
-    buttonSpinner: 'button-spinner',
-    close: 'player-close',
-    statePlaying: 'player--playing',
-    stateLoading: 'player--loading',
-    stateError: 'player--error'
-  },
-  picture: {
-    src: 'https://placehold.co/600x400',
-    width: 600,
-    height: 400
-  }
-});
-player.init();
+  });
+</script>
 ```
-
-## Support des plateformes
-
-### YouTube
-
-```html
-<div class="chicken-player" data-type="youtube" data-id="VIDEO_ID" id="player-1"></div>
-```
-
-### Dailymotion
-
-```html
-<div class="chicken-player" data-type="dailymotion" data-id="VIDEO_ID" id="player-1"></div>
-```
-
-### Vimeo
-
-```html
-<div class="chicken-player" data-type="vimeo" data-id="VIDEO_ID" id="player-1"></div>
-```
-
-## Événements
-
-Le player émet les événements suivants :
-
-- `chickenPlayer.play` : Émis lorsque la lecture commence
-- `chickenPlayer.stop` : Émis lorsque la lecture s'arrête
 
 ## Configuration
 
-| Option | Type | Description | Valeur par défaut |
-|--------|------|-------------|------------------|
-| player | object | Configuration des players | Voir la documentation |
-| classes | object | Classes CSS personnalisables | Voir la documentation |
-| picture | object | Configuration de l'image de couverture | Voir la documentation |
+### Options principales
 
-### Configuration des players
+| Option | Type | Description | Par défaut |
+|--------|------|-------------|------------|
+| `selector` | string | Sélecteur CSS pour les éléments player | `.chicken-player` |
+| `player.width` | number | Largeur du player | 600 |
+| `player.height` | number | Hauteur du player | 400 |
+| `classes.wrapper` | string | Classe CSS du wrapper | `cbo-chickenplayer` |
+| `classes.cover` | string | Classe CSS de la couverture | `player-cover` |
+| `classes.button` | string | Classe CSS du bouton | `cover-button` |
+| `classes.buttonIcon` | string | Classe CSS de l'icône du bouton | `button-icon` |
+| `classes.buttonSpinner` | string | Classe CSS du spinner | `button-spinner` |
+| `classes.close` | string | Classe CSS du bouton de fermeture | `player-close` |
+| `classes.statePlaying` | string | Classe CSS de l'état lecture | `player--playing` |
+| `classes.stateLoading` | string | Classe CSS de l'état chargement | `player--loading` |
+| `classes.stateError` | string | Classe CSS de l'état erreur | `player--error` |
+| `classes.stateReady` | string | Classe CSS de l'état prêt | `player--ready` |
+| `picture.src` | string | URL de l'image de couverture | `https://placehold.co/600x400` |
+| `picture.width` | number | Largeur de l'image de couverture | 600 |
+| `picture.height` | number | Hauteur de l'image de couverture | 400 |
+
+### Options spécifiques par plateforme
 
 #### YouTube
-- `host` : URL de l'API YouTube
-- `playerVars` : Paramètres du player YouTube (voir [documentation YouTube](https://developers.google.com/youtube/player_parameters))
+```javascript
+youtube: {
+  host: 'https://www.youtube-nocookie.com',
+  playerVars: {
+    modestbranding: 1,
+    showinfo: 0,
+    controls: 1,
+    iv_load_policy: 3,
+    fs: 1,
+    rel: 0,
+    loop: 0,
+    mute: 0
+  }
+}
+```
 
 #### Vimeo
-- `muted` : Lecture en sourdine
-- `loop` : Lecture en boucle
+```javascript
+vimeo: {
+  muted: false,
+  loop: false
+}
+```
 
 #### Dailymotion
-- `playerId` : ID du player
-- `params` : Paramètres du player (voir [documentation Dailymotion](https://developers.dailymotion.com/guides/getting-started-with-web-sdk/))
-
-## Développement
-
-```bash
-# Installation des dépendances
-npm install
-
-# Démarrage du serveur de développement
-npm start
-
-# Build en mode développement avec watch
-npm run dev
-
-# Build en mode production
-npm run build
+```javascript
+dailymotion: {
+  playerId: null,
+  params: {
+    startTime: 0,
+    scaleMode: 'fit',
+    loop: false,
+    mute: false
+  }
+}
 ```
+
+#### HTML5
+```javascript
+html5: {
+  controls: true,
+  preload: 'metadata',
+  playsinline: true
+}
+```
+
+## API
+
+### Événements
+
+Le player émet deux événements personnalisés :
+- `chickenPlayer.play` : Émis lorsque la lecture commence
+- `chickenPlayer.stop` : Émis lorsque la lecture s'arrête
 
 ## Licence
 
-GNU GPLv3 
+GNU GPL v3 © David Essayan
 
-ChickenPlayer - Copyright &copy; 2025 - David Essayan
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
