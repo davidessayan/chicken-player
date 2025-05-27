@@ -1,6 +1,6 @@
 {
     "name": "chicken-player",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "JavaScript plugin for YouTube, Vimeo, and Dailymotion video embedding",
     "main": "dist/chicken-player.umd.js",
     "module": "dist/chicken-player.es.js",
@@ -40,7 +40,7 @@
         "preview": "vite preview"
     },
     "author": "David Essayan",
-    "license": "MIT",
+    "license": "GPL-3.0",
     "devDependencies": {
         "@babel/core": "^7.24.0",
         "@babel/preset-env": "^7.24.0",
