@@ -3,10 +3,10 @@
     "version": "1.0.0",
     "description": "JavaScript plugin for YouTube, Vimeo, and Dailymotion video embedding",
     "main": "dist/chicken-player.umd.js",
-    "module": "dist/chicken-player.esm.js",
+    "module": "dist/chicken-player.es.js",
     "exports": {
         ".": {
-            "import": "./dist/chicken-player.esm.js",
+            "import": "./dist/chicken-player.es.js",
             "require": "./dist/chicken-player.umd.js"
         }
     },
