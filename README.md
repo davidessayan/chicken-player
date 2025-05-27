@@ -133,8 +133,18 @@ dailymotion: {
 ```javascript
 html5: {
   controls: true,
-  preload: 'metadata',
-  playsinline: true
+  preload: 'auto',
+  playsinline: false,
+  autoplay: false,
+  loop: false,
+  muted: false,
+  poster: '',
+  width: 'auto',
+  height: 'auto',
+  crossorigin: '',
+  disablePictureInPicture: false,
+  disableRemotePlayback: false,
+  controlsList: ''
 }
 ```
 

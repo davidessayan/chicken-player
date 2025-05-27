@@ -1,4 +1,4 @@
-class l {
+class p {
   constructor() {
     this.apiReady = !1, this.tempPlayerUid = null, this.tempPlayerId = null, this.videos = [], this.timers = [], this.config = {};
   }
@@ -78,7 +78,7 @@ class l {
     });
   }
 }
-class u extends l {
+class g extends p {
   /**
    * Initialize the Dailymotion API
    */
@@ -104,7 +104,7 @@ class u extends l {
     });
   }
 }
-const a = new u();
+const a = new g();
 window.dailymotion === void 0 && (window.dailymotion = {
   onScriptLoaded: () => {
     a.apiReady = !0, a.attemptPlayer(
@@ -113,7 +113,7 @@ window.dailymotion === void 0 && (window.dailymotion = {
     );
   }
 });
-class f extends l {
+class f extends p {
   /**
    * Initialize the YouTube API
    */
@@ -174,7 +174,7 @@ window.onYouTubeIframeAPIReady = function() {
     n.tempPlayerId
   );
 };
-class v extends l {
+class v extends p {
   /**
    * Initialize the Vimeo API
    */
@@ -205,13 +205,13 @@ window.onVimeoReadyCallback = function() {
     r.tempPlayerId
   );
 };
-class P extends l {
+class P extends p {
   /**
    * Initialize the HTML5 player
    * No API initialization needed for HTML5
    */
   initApi() {
-    console.log("initApi"), this.apiReady = !0, this.attemptPlayer(
+    this.apiReady = !0, this.attemptPlayer(
       this.tempPlayerUid,
       this.tempPlayerId
     );
@@ -224,11 +224,13 @@ class P extends l {
   createPlayer(e, t) {
     if (console.log("createPlayer", e, t), !this.videos[e]) {
       const s = document.createElement("video");
-      s.id = e, s.className = "html5-player", s.controls = !0, s.preload = "metadata", s.setAttribute("playsinline", ""), s.setAttribute("webkit-playsinline", "");
-      const i = document.createElement("source");
-      i.src = t, i.type = this.getVideoType(t), s.appendChild(i);
-      const o = document.querySelector(`#${e}`);
-      o && o.parentNode.replaceChild(s, o), this.videos[e] = s, this.onPlayerReady(e), this.onPlayerStateChange(e);
+      s.id = e, s.className = "html5-player";
+      const i = this.config.player.html5;
+      s.controls = i.controls, s.preload = i.preload, s.autoplay = i.autoplay, s.loop = i.loop, s.muted = i.muted, s.width = i.width, s.height = i.height, s.setAttribute("playsinline", ""), s.setAttribute("webkit-playsinline", ""), i.poster && s.setAttribute("poster", i.poster), i.crossorigin && s.setAttribute("crossorigin", i.crossorigin), i.disablePictureInPicture && s.setAttribute("disablePictureInPicture", ""), i.disableRemotePlayback && s.setAttribute("disableRemotePlayback", ""), i.controlsList && s.setAttribute("controlsList", i.controlsList);
+      const o = document.createElement("source");
+      o.src = t, o.type = this.getVideoType(t), s.appendChild(o);
+      const l = document.querySelector(`#${e}`);
+      l && l.parentNode.replaceChild(s, l), this.videos[e] = s, this.onPlayerReady(e), this.onPlayerStateChange(e);
     }
   }
   /**
@@ -275,7 +277,7 @@ class P extends l {
     });
   }
 }
-const d = new P(), b = {
+const m = new P(), b = {
   selector: ".chicken-player",
   player: {
     width: 600,
@@ -313,12 +315,24 @@ const d = new P(), b = {
       }
     },
     /* HTML5 defaults */
+    /* See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video */
     html5: {
       controls: !0,
-      preload: "metadata",
-      playsinline: !0
+      preload: "auto",
+      playsinline: !1,
+      autoplay: !1,
+      loop: !1,
+      muted: !1,
+      poster: "",
+      width: "auto",
+      height: "auto",
+      crossorigin: "",
+      disablePictureInPicture: !1,
+      disableRemotePlayback: !1,
+      controlsList: ""
     }
   },
+  /* CSS Classes */
   classes: {
     wrapper: "cbo-chickenplayer",
     cover: "player-cover",
@@ -331,11 +345,13 @@ const d = new P(), b = {
     stateError: "player--error",
     stateReady: "player--ready"
   },
+  /* Picture */
   picture: {
     src: "https://placehold.co/600x400",
     width: 600,
     height: 400
   },
+  /* Events */
   events: {
     play: new Event("chickenPlayer.play"),
     stop: new Event("chickenPlayer.stop")
@@ -416,11 +432,11 @@ class w {
   bindEvents() {
     const e = this.config.selector, t = `.${this.config.classes.button}`, s = `.${this.config.classes.close}`;
     document.querySelectorAll(`${e}:not(.${this.config.classes.stateReady})`).forEach((i) => {
-      const o = i.parentElement, m = o.querySelector(t), p = o.querySelector(s), h = i.getAttribute("data-type"), y = i.getAttribute("data-id"), g = i.getAttribute("id");
-      m.addEventListener("click", () => {
-        o.classList.add(this.config.classes.stateLoading), this.handlePlay(h, y, g);
-      }), p && p.addEventListener("click", () => {
-        o.classList.remove(this.config.classes.statePlaying), this.handleStop(h, y);
+      const o = i.parentElement, l = o.querySelector(t), h = o.querySelector(s), y = i.getAttribute("data-type"), d = i.getAttribute("data-id"), u = i.getAttribute("id");
+      l.addEventListener("click", () => {
+        o.classList.add(this.config.classes.stateLoading), this.handlePlay(y, d, u);
+      }), h && h.addEventListener("click", () => {
+        o.classList.remove(this.config.classes.statePlaying), this.handleStop(y, d);
       }), o.classList.add(this.config.classes.stateReady);
     });
   }
@@ -442,7 +458,7 @@ class w {
         r.initPlayer(t, s, this.config);
         break;
       case "html5":
-        d.initPlayer(t, s, this.config);
+        m.initPlayer(t, s, this.config);
         break;
       default:
         console.error("Unsupported player type:", e);
@@ -466,7 +482,7 @@ class w {
         r.stopPlayer(t);
         break;
       case "html5":
-        d.stopPlayer(t);
+        m.stopPlayer(t);
         break;
       default:
         console.error("Unsupported player type:", e);

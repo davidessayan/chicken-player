@@ -58,12 +58,25 @@ const defaultConfig = {
     },
 
     /* HTML5 defaults */
+    /* See: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video */
     html5: {
       controls: true,
-      preload: 'metadata',
-      playsinline: true
+      preload: 'auto',
+      playsinline: false,
+      autoplay: false,
+      loop: false,
+      muted: false,
+      poster: '',
+      width: 'auto',
+      height: 'auto',
+      crossorigin: '',
+      disablePictureInPicture: false,
+      disableRemotePlayback: false,
+      controlsList: ''
     }
   },
+
+  /* CSS Classes */
   classes: {
     wrapper: 'cbo-chickenplayer',
     cover: 'player-cover',
@@ -76,11 +89,15 @@ const defaultConfig = {
     stateError: 'player--error',
     stateReady: 'player--ready'
   },
+
+  /* Picture */
   picture: {
     src: 'https://placehold.co/600x400',
     width: 600,
     height: 400,
   },
+
+  /* Events */
   events: {
     play: new Event('chickenPlayer.play'),
     stop: new Event('chickenPlayer.stop'),
