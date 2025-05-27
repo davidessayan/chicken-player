@@ -1,9 +1,29 @@
 {
     "name": "chicken-player",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "JavaScript plugin for YouTube, Vimeo, and Dailymotion video embedding",
     "main": "dist/chicken-player.umd.js",
     "module": "dist/chicken-player.es.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/davidessayan/chicken-player.git"
+    },
+    "bugs": {
+        "url": "https://github.com/davidessayan/chicken-player/issues"
+    },
+    "homepage": "https://github.com/davidessayan/chicken-player#readme",
+    "keywords": [
+        "video",
+        "player",
+        "youtube",
+        "vimeo",
+        "dailymotion",
+        "embed",
+        "javascript",
+        "plugin",
+        "media",
+        "responsive"
+    ],
     "exports": {
         ".": {
             "import": "./dist/chicken-player.es.js",
