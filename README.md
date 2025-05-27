@@ -4,12 +4,19 @@
 
 Un plugin JavaScript léger et flexible pour l'intégration de vidéos YouTube, Vimeo, Dailymotion et HTML5 dans vos projets web.
 
-## Installation
+## Installation basique
 
 ### Via NPM
 
 ```bash
 npm install chicken-player
+```
+
+Puis : 
+
+```js
+import ChickenPlayer from "chicken-player";
+import "chicken-player/style";
 ```
 
 ### Via CDN
@@ -47,17 +54,13 @@ npm install chicken-player
   const player = new ChickenPlayer({
     selector: '.chicken-player',
     player: {
-      width: 800,
-      height: 450,
       vimeo: {
         muted: true,
         loop: true
       }
     },
     picture: {
-      src: 'path/to/thumbnail.jpg',
-      width: 800,
-      height: 450
+      src: 'path/to/thumbnail.jpg'
     }
   });
 </script>

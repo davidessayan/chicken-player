@@ -8,7 +8,8 @@
         ".": {
             "import": "./dist/chicken-player.es.js",
             "require": "./dist/chicken-player.umd.js"
-        }
+        },
+        "./style": "./dist/chicken-player.css"
     },
     "files": [
         "dist"
