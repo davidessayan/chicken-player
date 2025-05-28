@@ -80,6 +80,7 @@ const defaultConfig = {
   /* CSS Classes */
   classes: {
     wrapper: 'cbo-chickenplayer',
+    object: 'player-object',
     cover: 'player-cover',
     button: 'cover-button',
     buttonIcon: 'button-icon',
@@ -188,25 +189,31 @@ class ChickenPlayer {
    * @returns {HTMLElement} Complete player markup
    */
   createMarkup(el) {
+    // Getting UID from data-id
+    const uid = el.getAttribute('id');
+
     // Create wrapper
-    const wrapper = document.createElement('div');
-    const wrapperClass = this.config.classes.wrapper;
-    const typeClass = 'player--' + el.getAttribute('data-type');
-    wrapper.className = wrapperClass + ' ' + typeClass;
+    el.classList.add(this.config.classes.wrapper);
+    el.classList.add('player--' + el.getAttribute('data-type'));
 
-    // Clone original player
-    const playerClone = el.cloneNode(true);
-
-    // Create cover elements
+    // Create elements
+    const object = this.createObject(uid);
     const cover = this.createCover();
     const button = this.createButton();
 
     // Assemble structure
-    wrapper.appendChild(playerClone);
-    wrapper.appendChild(cover);
+    el.appendChild(object);
+    el.appendChild(cover);
     cover.appendChild(button);
 
-    return wrapper;
+    return el;
+  }
+
+  createObject(uid) {
+    const object = document.createElement('div');
+    object.className = this.config.classes.object;
+    object.setAttribute('id', uid + '-object');
+    return object;
   }
 
   /**
@@ -261,35 +268,35 @@ class ChickenPlayer {
    */
   bindEvents() {
     const playerSelector = this.config.selector;
+    const objectSelector = `.${this.config.classes.object}`;
     const playSelector = `.${this.config.classes.button}`;
     const closeSelector = `.${this.config.classes.close}`;
 
     document.querySelectorAll(`${playerSelector}:not(.${this.config.classes.stateReady})`).forEach(el => {
-      const wrapper = el.parentElement;
-
-      const play = wrapper.querySelector(playSelector);
-      const close = wrapper.querySelector(closeSelector);
+      const object = el.querySelector(objectSelector);
+      const play = el.querySelector(playSelector);
+      const close = el.querySelector(closeSelector);
 
       const type = el.getAttribute('data-type');
       const id = el.getAttribute('data-id');
-      const uid = el.getAttribute('id');
+      const uid = object.getAttribute('id');
 
       // Play button click handler
       play.addEventListener('click', () => {
-        wrapper.classList.add(this.config.classes.stateLoading);
+        el.classList.add(this.config.classes.stateLoading);
         this.handlePlay(type, id, uid);
       });
 
       // Close button click handler
       if (close) {
         close.addEventListener('click', () => {
-          wrapper.classList.remove(this.config.classes.statePlaying);
+          el.classList.remove(this.config.classes.statePlaying);
           this.handleStop(type, id);
         });
       }
 
       // Mark wrapper as ready to prevent re-initialization
-      wrapper.classList.add(this.config.classes.stateReady);
+      el.classList.add(this.config.classes.stateReady);
     });
   }
 
