@@ -66,6 +66,28 @@ import "chicken-player/style";
 </script>
 ```
 
+## Apparence & Dimensions du player
+
+Contrairement à ce que nous pourrions penser, les attributs `width` et `height` ne permettent pas de modifier l'apparence du player, mais seulement les attributs intrinsèques (ex: attributs de l'iframe).
+
+ChickenPlayer est conçu de manière à ce que l'intégralité de son apparence soit modifiable en CSS.
+
+Ainsi pour modifier ses dimensions, il suffira d'éditer les styles de la classe `.cbo-chickenplayer`.
+
+Par défaut, elle est définie ainsi : 
+
+```css
+.cbo-chickenplayer {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: black;
+}
+```
+
+Vous pouvez donc modifier la valeur de `padding-bottom` pour modifier son ratio, ou utiliser d'autres propriétés selon votre convenance ;)
+
 ## Configuration
 
 ### Options principales
@@ -73,8 +95,8 @@ import "chicken-player/style";
 | Option | Type | Description | Par défaut |
 |--------|------|-------------|------------|
 | `selector` | string | Sélecteur CSS pour les éléments player | `.chicken-player` |
-| `player.width` | number | Largeur du player | 600 |
-| `player.height` | number | Hauteur du player | 400 |
+| `player.width` | number | Largeur intrinsèque du player | 600 |
+| `player.height` | number | Hauteur intrinsèque du player | 400 |
 | `classes.wrapper` | string | Classe CSS du wrapper | `cbo-chickenplayer` |
 | `classes.object` | string | Classe CSS de la cible du lecteur | `player-object` |
 | `classes.cover` | string | Classe CSS de la couverture | `player-cover` |
