@@ -11,13 +11,11 @@ export default defineConfig({
         },
         rollupOptions: {
             output: {
-                // Génère un seul CSS, si tu utilises du SCSS ou CSS dans ton JS
                 assetFileNames: (assetInfo) => {
                     if (assetInfo.name == 'style.css') return 'chicken-player.css';
                     return assetInfo.name;
                 },
             },
-            // Optionnel : externaliser les libs si tu veux
             external: [],
         }
     },
