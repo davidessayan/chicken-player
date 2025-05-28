@@ -148,20 +148,78 @@ html5: {
 }
 ```
 
-## API
-
-### Événements
+## Événements de lecture
 
 Le player émet deux événements personnalisés :
 - `chickenPlayer.play` : Émis lorsque la lecture commence
 - `chickenPlayer.stop` : Émis lorsque la lecture s'arrête
 
+
+## Gestion des cookies
+
+Le player peut être configuré pour gérer le consentement des cookies de manière globale ou par type de player.
+
+### Configuration
+
+#### Configuration globale
+```javascript
+const player = new ChickenPlayer({
+    cookies: {
+        active: true,
+        message: 'Pour regarder cette vidéo, veuillez accepter les cookies du lecteur vidéo.',
+        eventConsent: 'chickenPlayer.cookies.consent',
+        eventReject: 'chickenPlayer.cookies.reject',
+        types: ['youtube', 'dailymotion', 'vimeo']
+    }
+});
+```
+
+#### Configuration par type de player
+```javascript
+const player = new ChickenPlayer({
+    player: {
+      youtube: {
+        cookies: {
+          active: true,
+          eventConsent: 'chickenPlayer.cookies.consent',
+          eventReject: 'chickenPlayer.cookies.reject',
+        }
+      }
+    }
+});
+```
+
+### Options disponibles
+
+| Option | Type | Description | Par défaut |
+|--------|------|-------------|------------|
+| `cookies.active` | boolean | Active/désactive la gestion des cookies | `false` |
+| `cookies.message` | string | Message affiché quand le consentement est nécessaire | `'Pour regarder cette vidéo...'` |
+| `cookies.eventConsent` | string | Événement global de consentement | `'chickenPlayer.cookies.consent'` |
+| `cookies.eventReject` | string | Événement global de refus | `'chickenPlayer.cookies.reject'` |
+| `cookies.types` | array | Types de players concernés | `['youtube', 'dailymotion', 'vimeo']` |
+| `cookies.player[type].needConsent` | boolean | Active/désactive le consentement pour un type spécifique | `false` |
+| `cookies.player[type].consentEvent` | string | Événement de consentement spécifique au type | `undefined` |
+| `cookies.player[type].rejectEvent` | string | Événement de refus spécifique au type | `undefined` |
+
+### Gestion des événements
+
+Pour déclencher les événements de consentement, vous pouvez utiliser le système d'événements natif de JavaScript :
+
+```javascript
+// Consentement global
+document.dispatchEvent(new Event('chickenPlayer.cookies.consent'));
+document.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
+
+// Consentement spécifique à YouTube
+document.dispatchEvent(new Event('youtube.cookies.consent'));
+document.dispatchEvent(new Event('youtube.cookies.reject'));
+```
 ## Licence
 
-GNU GPL v3 © David Essayan
+This software is licensed under the Chicken Public License.
+You may use it freely for personal and commercial projects,
+but you may not distribute or sell modified versions of this code.
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+To obtain a commercial license for resale or OEM bundling,
+contact [ton-email@example.com].

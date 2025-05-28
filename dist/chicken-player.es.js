@@ -1,4 +1,4 @@
-class p {
+class h {
   constructor() {
     this.apiReady = !1, this.tempPlayerUid = null, this.tempPlayerId = null, this.videos = [], this.timers = [], this.config = {};
   }
@@ -9,7 +9,10 @@ class p {
    * @param {Object} config - Player configuration
    */
   initPlayer(e, t, s) {
-    this.apiReady ? this.attemptPlayer(t, e) : (this.tempPlayerUid = t, this.tempPlayerId = e, this.config = s, this.initApi());
+    this.apiReady ? this.attemptPlayer(t, e) : (this.tempPlayerUid = t, this.tempPlayerId = e, this.config = {
+      needConsent: !1,
+      ...s
+    }, this.initApi());
   }
   /**
    * Initialize the video API
@@ -78,7 +81,7 @@ class p {
     });
   }
 }
-class g extends p {
+class g extends h {
   /**
    * Initialize the Dailymotion API
    */
@@ -104,16 +107,16 @@ class g extends p {
     });
   }
 }
-const a = new g();
+const r = new g();
 window.dailymotion === void 0 && (window.dailymotion = {
   onScriptLoaded: () => {
-    a.apiReady = !0, a.attemptPlayer(
-      a.tempPlayerUid,
-      a.tempPlayerId
+    r.apiReady = !0, r.attemptPlayer(
+      r.tempPlayerUid,
+      r.tempPlayerId
     );
   }
 });
-class f extends p {
+class f extends h {
   /**
    * Initialize the YouTube API
    */
@@ -167,14 +170,14 @@ class f extends p {
     document.querySelector(`#${e}`).dispatchEvent(this.config.events.play), this.videos[e].playVideo();
   }
 }
-const n = new f();
+const c = new f();
 window.onYouTubeIframeAPIReady = function() {
-  n.apiReady = !0, n.attemptPlayer(
-    n.tempPlayerUid,
-    n.tempPlayerId
+  c.apiReady = !0, c.attemptPlayer(
+    c.tempPlayerUid,
+    c.tempPlayerId
   );
 };
-class v extends p {
+class v extends h {
   /**
    * Initialize the Vimeo API
    */
@@ -198,14 +201,14 @@ class v extends p {
     }), this.onPlayerReady(e), this.onPlayerStateChange(e));
   }
 }
-const r = new v();
+const l = new v();
 window.onVimeoReadyCallback = function() {
-  r.apiReady = !0, r.attemptPlayer(
-    r.tempPlayerUid,
-    r.tempPlayerId
+  l.apiReady = !0, l.attemptPlayer(
+    l.tempPlayerUid,
+    l.tempPlayerId
   );
 };
-class P extends p {
+class P extends h {
   /**
    * Initialize the HTML5 player
    * No API initialization needed for HTML5
@@ -229,8 +232,8 @@ class P extends p {
       s.controls = i.controls, s.preload = i.preload, s.autoplay = i.autoplay, s.loop = i.loop, s.muted = i.muted, s.width = i.width, s.height = i.height, s.setAttribute("playsinline", ""), s.setAttribute("webkit-playsinline", ""), i.poster && s.setAttribute("poster", i.poster), i.crossorigin && s.setAttribute("crossorigin", i.crossorigin), i.disablePictureInPicture && s.setAttribute("disablePictureInPicture", ""), i.disableRemotePlayback && s.setAttribute("disableRemotePlayback", ""), i.controlsList && s.setAttribute("controlsList", i.controlsList);
       const o = document.createElement("source");
       o.src = t, o.type = this.getVideoType(t), s.appendChild(o);
-      const l = document.querySelector(`#${e}`);
-      l && l.parentNode.replaceChild(s, l), this.videos[e] = s, this.onPlayerReady(e), this.onPlayerStateChange(e);
+      const n = document.querySelector(`#${e}`);
+      n && n.parentNode.replaceChild(s, n), this.videos[e] = s, this.onPlayerReady(e), this.onPlayerStateChange(e);
     }
   }
   /**
@@ -277,7 +280,35 @@ class P extends p {
     });
   }
 }
-const m = new P(), b = {
+const m = new P();
+class b {
+  constructor(e, t) {
+    console.log("CookieManager constructor"), this.consentState = !1, this.needConsent = t.cookies.active, this.consentEvent = t.cookies.eventConsent, this.rejectEvent = t.cookies.eventReject, this.consentState = !this.needConsent, this.config = t, this.playerType = e, this.wrapper = document.querySelector(`.${t.classes.wrapper}`), this.setPlayerConsent(), console.log(this.playerType, this.needConsent), this.needConsent && (this.setConsentMessage(), this.setWrapperState()), this.needConsent && this.consentEvent && window.addEventListener(this.consentEvent, () => {
+      this.consentState = !0, this.setWrapperState();
+    }), this.needConsent && this.rejectEvent && window.addEventListener(this.rejectEvent, () => {
+      this.consentState = !1, this.setWrapperState();
+    });
+  }
+  setWrapperState() {
+    console.log("setWrapperState", this.consentState, this.playerType, this.needConsent), this.consentState ? this.wrapper.classList.remove(this.config.classes.needConsent) : this.wrapper.classList.add(this.config.classes.needConsent);
+  }
+  setConsentMessage() {
+    const e = this.wrapper.querySelector(`.${this.config.classes.cover}`);
+    if (!e) return;
+    const t = document.createElement("div");
+    t.className = this.config.classes.consentMessage, t.innerHTML = `
+            <p>${this.config.cookies.message}</p>
+        `, e.appendChild(t);
+  }
+  setPlayerConsent() {
+    var e, t, s, i, o, n;
+    (t = (e = this.config.player[this.playerType]) == null ? void 0 : e.cookies) != null && t.active && (this.needConsent = this.config.player[this.playerType].cookies.active, this.wrapper = document.querySelector(`.${this.config.classes.wrapper}.player--${this.playerType}`)), (i = (s = this.config.player[this.playerType]) == null ? void 0 : s.cookies) != null && i.eventConsent && (this.consentEvent = this.config.player[this.playerType].cookies.eventConsent), (n = (o = this.config.player[this.playerType]) == null ? void 0 : o.cookies) != null && n.eventReject && (this.rejectEvent = this.config.player[this.playerType].cookies.eventReject), this.consentState = !this.needConsent;
+  }
+  hasConsent() {
+    return this.consentState;
+  }
+}
+const w = {
   selector: ".chicken-player",
   player: {
     width: 600,
@@ -343,7 +374,9 @@ const m = new P(), b = {
     statePlaying: "player--playing",
     stateLoading: "player--loading",
     stateError: "player--error",
-    stateReady: "player--ready"
+    stateReady: "player--ready",
+    needConsent: "player--needconsent",
+    consentMessage: "cover-needconsent"
   },
   /* Picture */
   picture: {
@@ -355,15 +388,23 @@ const m = new P(), b = {
   events: {
     play: new Event("chickenPlayer.play"),
     stop: new Event("chickenPlayer.stop")
+  },
+  /* Cookie Consent */
+  cookies: {
+    active: !1,
+    message: "Pour regarder cette vidéo, veuillez accepter les cookies du lecteur vidéo dans vos préférences de confidentialité.",
+    eventConsent: "chickenPlayer.cookies.consent",
+    eventReject: "chickenPlayer.cookies.reject",
+    types: ["youtube", "dailymotion", "vimeo"]
   }
 };
-class w {
+class k {
   /**
    * Initialize a new Chicken Player instance
    * @param {Object} opts - User configuration options
    */
   constructor(e = {}) {
-    this.config = this.mergeConfig(b, e), typeof window < "u" && typeof document < "u" && this.init();
+    this.config = this.mergeConfig(w, e), typeof window < "u" && typeof document < "u" && this.init();
   }
   /**
    * Initialize the player with the current configuration
@@ -371,8 +412,12 @@ class w {
    */
   init() {
     document.querySelectorAll(`${this.config.selector}:not(.${this.config.classes.stateReady})`).forEach((e) => {
-      const t = this.createMarkup(e);
-      e.parentNode.replaceChild(t, e);
+      if (e.getAttribute("data-type") && e.getAttribute("data-id") && e.getAttribute("id")) {
+        const t = this.createMarkup(e);
+        e.parentNode.replaceChild(t, e);
+      }
+    }), this.config.cookies.types.forEach((e) => {
+      new b(e, this.config);
     }), this.bindEvents();
   }
   /**
@@ -393,10 +438,10 @@ class w {
    * @returns {HTMLElement} Complete player markup
    */
   createMarkup(e) {
-    const t = document.createElement("div");
-    t.className = this.config.classes.wrapper;
-    const s = e.cloneNode(!0), i = this.createCover(), o = this.createButton();
-    return t.appendChild(s), t.appendChild(i), i.appendChild(o), t;
+    const t = document.createElement("div"), s = this.config.classes.wrapper, i = "player--" + e.getAttribute("data-type");
+    t.className = s + " " + i;
+    const o = e.cloneNode(!0), n = this.createCover(), p = this.createButton();
+    return t.appendChild(o), t.appendChild(n), n.appendChild(p), t;
   }
   /**
    * Create the player cover element
@@ -432,10 +477,10 @@ class w {
   bindEvents() {
     const e = this.config.selector, t = `.${this.config.classes.button}`, s = `.${this.config.classes.close}`;
     document.querySelectorAll(`${e}:not(.${this.config.classes.stateReady})`).forEach((i) => {
-      const o = i.parentElement, l = o.querySelector(t), h = o.querySelector(s), y = i.getAttribute("data-type"), d = i.getAttribute("data-id"), u = i.getAttribute("id");
-      l.addEventListener("click", () => {
+      const o = i.parentElement, n = o.querySelector(t), p = o.querySelector(s), y = i.getAttribute("data-type"), d = i.getAttribute("data-id"), u = i.getAttribute("id");
+      n.addEventListener("click", () => {
         o.classList.add(this.config.classes.stateLoading), this.handlePlay(y, d, u);
-      }), h && h.addEventListener("click", () => {
+      }), p && p.addEventListener("click", () => {
         o.classList.remove(this.config.classes.statePlaying), this.handleStop(y, d);
       }), o.classList.add(this.config.classes.stateReady);
     });
@@ -449,13 +494,13 @@ class w {
   handlePlay(e, t, s) {
     switch (e) {
       case "youtube":
-        n.initPlayer(t, s, this.config);
+        c.initPlayer(t, s, this.config);
         break;
       case "dailymotion":
-        a.initPlayer(t, s, this.config);
+        r.initPlayer(t, s, this.config);
         break;
       case "vimeo":
-        r.initPlayer(t, s, this.config);
+        l.initPlayer(t, s, this.config);
         break;
       case "html5":
         m.initPlayer(t, s, this.config);
@@ -473,13 +518,13 @@ class w {
   handleStop(e, t) {
     switch (e) {
       case "youtube":
-        n.stopPlayer(t);
+        c.stopPlayer(t);
         break;
       case "dailymotion":
-        a.stopPlayer(t);
+        r.stopPlayer(t);
         break;
       case "vimeo":
-        r.stopPlayer(t);
+        l.stopPlayer(t);
         break;
       case "html5":
         m.stopPlayer(t);
@@ -491,5 +536,5 @@ class w {
   }
 }
 export {
-  w as default
+  k as default
 };

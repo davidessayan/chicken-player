@@ -26,7 +26,6 @@ class ChickenHtml5 extends ChickenPlayerBase {
      * @param {string} id - Video URL
      */
     createPlayer(uid, id) {
-        console.log('createPlayer', uid, id);
         if (!this.videos[uid]) {
             const video = document.createElement('video');
             video.id = uid;
@@ -86,7 +85,6 @@ class ChickenHtml5 extends ChickenPlayerBase {
      */
     getVideoType(url) {
         const extension = url.split('.').pop().toLowerCase();
-        console.log('extension', extension);
         const types = {
             'mp4': 'video/mp4',
             'webm': 'video/webm',

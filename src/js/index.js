@@ -9,6 +9,7 @@ import chickenDailymotion from './chicken-dailymotion';
 import chickenYoutube from './chicken-youtube';
 import chickenVimeo from './chicken-vimeo';
 import chickenHtml5 from './chicken-html5';
+import chickenPlayerConsent from './chicken-player-consent';
 
 import '../scss/main.scss';
 
@@ -87,7 +88,9 @@ const defaultConfig = {
     statePlaying: 'player--playing',
     stateLoading: 'player--loading',
     stateError: 'player--error',
-    stateReady: 'player--ready'
+    stateReady: 'player--ready',
+    needConsent: 'player--needconsent',
+    consentMessage: 'cover-needconsent'
   },
 
   /* Picture */
@@ -101,6 +104,15 @@ const defaultConfig = {
   events: {
     play: new Event('chickenPlayer.play'),
     stop: new Event('chickenPlayer.stop'),
+  },
+
+  /* Cookie Consent */
+  cookies: {
+    active: false,
+    message: 'Pour regarder cette vidéo, veuillez accepter les cookies du lecteur vidéo dans vos préférences de confidentialité.',
+    eventConsent: 'chickenPlayer.cookies.consent',
+    eventReject: 'chickenPlayer.cookies.reject',
+    types: ['youtube', 'dailymotion', 'vimeo']
   }
 };
 
@@ -126,8 +138,18 @@ class ChickenPlayer {
    */
   init() {
     document.querySelectorAll(`${this.config.selector}:not(.${this.config.classes.stateReady})`).forEach(el => {
-      const markup = this.createMarkup(el);
-      el.parentNode.replaceChild(markup, el);
+      if (
+        el.getAttribute('data-type') &&
+        el.getAttribute('data-id') &&
+        el.getAttribute('id')
+      ) {
+        const markup = this.createMarkup(el);
+        el.parentNode.replaceChild(markup, el);
+      }
+    });
+
+    this.config.cookies.types.forEach(type => {
+      new chickenPlayerConsent(type, this.config);
     });
 
     this.bindEvents();
@@ -168,7 +190,9 @@ class ChickenPlayer {
   createMarkup(el) {
     // Create wrapper
     const wrapper = document.createElement('div');
-    wrapper.className = this.config.classes.wrapper;
+    const wrapperClass = this.config.classes.wrapper;
+    const typeClass = 'player--' + el.getAttribute('data-type');
+    wrapper.className = wrapperClass + ' ' + typeClass;
 
     // Clone original player
     const playerClone = el.cloneNode(true);

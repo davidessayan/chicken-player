@@ -43,6 +43,8 @@
     <div class="switch-btns">
         <button id="btn-umd">UMD</button>
         <button id="btn-esm">ESM</button>
+        <button id="btn-consent">Consent Cookies</button>
+        <button id="btn-reject">Reject Cookies</button>
         <span class="mode-label" id="current-mode-label"></span>
     </div>
 
@@ -95,6 +97,12 @@
         document.getElementById('btn-umd').onclick = () => switchMode('umd');
         document.getElementById('btn-esm').onclick = () => switchMode('esm');
 
+        document.getElementById('btn-consent').onclick = () => {
+            window.dispatchEvent(new Event('chickenPlayer.cookies.consent'));
+        };
+        document.getElementById('btn-reject').onclick = () => {
+            window.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
+        };
         // --- DYNAMIC LOADING ---
         const timestamp = Date.now();
 
@@ -115,7 +123,7 @@
             script.src = '/dist/chicken-player.umd.js?t=' + timestamp;
             script.onload = () => {
                 if (window.ChickenPlayer) {
-                    window.playerUMD1 = new window.ChickenPlayer({ selector: '.chicken-player-umd-1' });
+                    window.playerUMD1 = new window.ChickenPlayer({ player: { youtube: { cookies: { active: true } } }, selector: '.chicken-player-umd-1' });
                     window.playerUMD2 = new window.ChickenPlayer({ selector: '.chicken-player-umd-2' });
                     console.log('[ChickenPlayer-UMD]', window.playerUMD1, window.playerUMD2);
                 } else {

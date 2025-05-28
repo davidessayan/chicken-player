@@ -1,6 +1,6 @@
 {
     "name": "chicken-player",
-    "version": "1.0.7",
+    "version": "1.1.0",
     "description": "JavaScript plugin for YouTube, Vimeo, and Dailymotion video embedding",
     "main": "dist/chicken-player.umd.js",
     "module": "dist/chicken-player.es.js",

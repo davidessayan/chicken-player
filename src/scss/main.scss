@@ -87,6 +87,15 @@
                 animation: chicken-player-spinner 1s linear infinite;
             }
         }
+
+        .cover-needconsent {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
     }
 
     // Initialized state
@@ -124,6 +133,18 @@
     &.player--playing {
         .player-cover {
             transform: translateY(-100%);
+        }
+    }
+
+    // Need consent state
+
+    &.player--needconsent {
+        .cover-button {
+            display: none;
+        }
+
+        .cover-needconsent {
+            display: block;
         }
     }
 }

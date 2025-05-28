@@ -25,7 +25,10 @@ class ChickenPlayerBase {
         if (!this.apiReady) {
             this.tempPlayerUid = uid;
             this.tempPlayerId = id;
-            this.config = config;
+            this.config = {
+                needConsent: false,
+                ...config
+            };
             this.initApi();
         } else {
             this.attemptPlayer(uid, id);
