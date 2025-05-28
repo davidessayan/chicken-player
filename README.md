@@ -198,7 +198,7 @@ const player = new ChickenPlayer({
 | `cookies.eventConsent` | string | Événement global de consentement | `'chickenPlayer.cookies.consent'` |
 | `cookies.eventReject` | string | Événement global de refus | `'chickenPlayer.cookies.reject'` |
 | `cookies.types` | array | Types de players concernés | `['youtube', 'dailymotion', 'vimeo']` |
-| `cookies.player[type].needConsent` | boolean | Active/désactive le consentement pour un type spécifique | `false` |
+| `cookies.player[type].needConsent` | boolean | Active/désactive le consentement pour un type spécifique | `undefined` |
 | `cookies.player[type].consentEvent` | string | Événement de consentement spécifique au type | `undefined` |
 | `cookies.player[type].rejectEvent` | string | Événement de refus spécifique au type | `undefined` |
 
@@ -211,15 +211,16 @@ Pour déclencher les événements de consentement, vous pouvez utiliser le syst�
 document.dispatchEvent(new Event('chickenPlayer.cookies.consent'));
 document.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
 
-// Consentement spécifique à YouTube
-document.dispatchEvent(new Event('youtube.cookies.consent'));
-document.dispatchEvent(new Event('youtube.cookies.reject'));
+// Consentement spécifique à YouTube (si défini)
+document.dispatchEvent(new Event('votre.evenement.consent'));
+document.dispatchEvent(new Event('votre.evenement.reject'));
 ```
 ## Licence
 
-This software is licensed under the Chicken Public License.
-You may use it freely for personal and commercial projects,
-but you may not distribute or sell modified versions of this code.
+GNU GPL v3 © David Essayan
 
-To obtain a commercial license for resale or OEM bundling,
-contact [ton-email@example.com].
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see [https://www.gnu.org/licenses/].
