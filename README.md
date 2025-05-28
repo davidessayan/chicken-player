@@ -76,6 +76,7 @@ import "chicken-player/style";
 | `player.width` | number | Largeur du player | 600 |
 | `player.height` | number | Hauteur du player | 400 |
 | `classes.wrapper` | string | Classe CSS du wrapper | `cbo-chickenplayer` |
+| `classes.object` | string | Classe CSS de la cible du lecteur | `player-object` |
 | `classes.cover` | string | Classe CSS de la couverture | `player-cover` |
 | `classes.button` | string | Classe CSS du bouton | `cover-button` |
 | `classes.buttonIcon` | string | Classe CSS de l'icône du bouton | `button-icon` |
