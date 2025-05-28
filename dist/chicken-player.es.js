@@ -381,7 +381,7 @@ const k = {
   },
   /* Picture */
   picture: {
-    src: "https://placehold.co/600x400",
+    src: "https://unpkg.com/chicken-player/dist/placeholder.png",
     width: 600,
     height: 400
   },

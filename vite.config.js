@@ -20,5 +20,6 @@ export default defineConfig({
             // Optionnel : externaliser les libs si tu veux
             external: [],
         }
-    }
+    },
+    publicDir: 'src/assets'
 });

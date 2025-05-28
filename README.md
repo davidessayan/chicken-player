@@ -108,7 +108,7 @@ Vous pouvez donc modifier la valeur de `padding-bottom` pour modifier son ratio,
 | `classes.stateLoading` | string | Classe CSS de l'état chargement | `player--loading` |
 | `classes.stateError` | string | Classe CSS de l'état erreur | `player--error` |
 | `classes.stateReady` | string | Classe CSS de l'état prêt | `player--ready` |
-| `picture.src` | string | URL de l'image de couverture | `https://placehold.co/600x400` |
+| `picture.src` | string | URL de l'image de couverture | `https://unpkg.com/chicken-player/dist/placeholder.png` |
 | `picture.width` | number | Largeur de l'image de couverture | 600 |
 | `picture.height` | number | Hauteur de l'image de couverture | 400 |
 
