@@ -280,7 +280,7 @@ class P extends p {
     });
   }
 }
-const m = new P();
+const u = new P();
 class w {
   constructor(e, t) {
     this.consentState = !1, this.needConsent = t.cookies.active, this.consentEvent = t.cookies.eventConsent, this.rejectEvent = t.cookies.eventReject, this.consentState = !this.needConsent, this.config = t, this.playerType = e, this.wrapper = document.querySelector(`.${t.classes.wrapper}`), this.setPlayerConsent(), this.needConsent && (this.setConsentMessage(), this.setWrapperState()), this.needConsent && this.consentEvent && window.addEventListener(this.consentEvent, () => {
@@ -413,7 +413,7 @@ class E {
    */
   init() {
     document.querySelectorAll(`${this.config.selector}:not(.${this.config.classes.stateReady})`).forEach((e) => {
-      if (e.getAttribute("data-type") && e.getAttribute("data-id") && e.getAttribute("id")) {
+      if (e.getAttribute("data-type") && e.getAttribute("data-id")) {
         const t = this.createMarkup(e);
         e.parentNode.replaceChild(t, e);
       }
@@ -439,9 +439,9 @@ class E {
    * @returns {HTMLElement} Complete player markup
    */
   createMarkup(e) {
-    const t = e.getAttribute("id");
-    e.classList.add(this.config.classes.wrapper), e.classList.add("player--" + e.getAttribute("data-type"));
-    const s = this.createObject(t), i = this.createCover(), o = this.createButton();
+    let t = e.getAttribute("id");
+    t || (t = "chickenPlayer_" + Math.random().toString(36).substr(2, 9), e.setAttribute("id", t)), e.classList.add(this.config.classes.wrapper), e.classList.add("player--" + e.getAttribute("data-type"));
+    const s = this.createObject(t), i = this.createCover(e), o = this.createButton();
     return e.appendChild(s), e.appendChild(i), i.appendChild(o), e;
   }
   createObject(e) {
@@ -450,13 +450,20 @@ class E {
   }
   /**
    * Create the player cover element
+   * @param {HTMLElement} originalEl - Original player element
    * @returns {HTMLElement} Cover element
    */
-  createCover() {
-    const e = document.createElement("div");
-    e.className = this.config.classes.cover;
-    const t = document.createElement("img");
-    return t.src = this.config.picture.src, t.width = this.config.picture.width, t.height = this.config.picture.height, t.alt = "", t.setAttribute("loading", "lazy"), e.appendChild(t), e;
+  createCover(e) {
+    const t = document.createElement("div");
+    t.className = this.config.classes.cover;
+    const s = e.querySelector("img");
+    if (s)
+      t.appendChild(s);
+    else {
+      const i = document.createElement("img");
+      i.src = this.config.picture.src, i.width = this.config.picture.width, i.height = this.config.picture.height, i.alt = "", i.setAttribute("loading", "lazy"), t.appendChild(i);
+    }
+    return t;
   }
   /**
    * Create the play button element
@@ -482,11 +489,16 @@ class E {
   bindEvents() {
     const e = this.config.selector, t = `.${this.config.classes.object}`, s = `.${this.config.classes.button}`, i = `.${this.config.classes.close}`;
     document.querySelectorAll(`${e}:not(.${this.config.classes.stateReady})`).forEach((o) => {
-      const n = o.querySelector(t), u = o.querySelector(s), h = o.querySelector(i), y = o.getAttribute("data-type"), d = o.getAttribute("data-id"), g = n.getAttribute("id");
-      u.addEventListener("click", () => {
-        o.classList.add(this.config.classes.stateLoading), this.handlePlay(y, d, g);
-      }), h && h.addEventListener("click", () => {
-        o.classList.remove(this.config.classes.statePlaying), this.handleStop(y, d);
+      const n = o.querySelector(t), h = o.querySelector(s), y = o.querySelector(i);
+      if (!n || !h) {
+        console.warn("Chicken Player: Required elements not found for player", o);
+        return;
+      }
+      const d = o.getAttribute("data-type"), m = o.getAttribute("data-id"), g = n.getAttribute("id");
+      h.addEventListener("click", () => {
+        o.classList.add(this.config.classes.stateLoading), this.handlePlay(d, m, g);
+      }), y && y.addEventListener("click", () => {
+        o.classList.remove(this.config.classes.statePlaying), this.handleStop(d, m);
       }), o.classList.add(this.config.classes.stateReady);
     });
   }
@@ -508,7 +520,7 @@ class E {
         l.initPlayer(t, s, this.config);
         break;
       case "html5":
-        m.initPlayer(t, s, this.config);
+        u.initPlayer(t, s, this.config);
         break;
       default:
         console.error("Unsupported player type:", e);
@@ -532,7 +544,7 @@ class E {
         l.stopPlayer(t);
         break;
       case "html5":
-        m.stopPlayer(t);
+        u.stopPlayer(t);
         break;
       default:
         console.error("Unsupported player type:", e);

@@ -141,8 +141,7 @@ class ChickenPlayer {
     document.querySelectorAll(`${this.config.selector}:not(.${this.config.classes.stateReady})`).forEach(el => {
       if (
         el.getAttribute('data-type') &&
-        el.getAttribute('data-id') &&
-        el.getAttribute('id')
+        el.getAttribute('data-id')
       ) {
         const markup = this.createMarkup(el);
         el.parentNode.replaceChild(markup, el);
@@ -189,8 +188,14 @@ class ChickenPlayer {
    * @returns {HTMLElement} Complete player markup
    */
   createMarkup(el) {
-    // Getting UID from data-id
-    const uid = el.getAttribute('id');
+    // Getting UID from data-id or generate one if not present
+    let uid = el.getAttribute('id');
+
+    if (!uid) {
+      // Generate a unique ID with chickenPlayer_ prefix
+      uid = 'chickenPlayer_' + Math.random().toString(36).substr(2, 9);
+      el.setAttribute('id', uid);
+    }
 
     // Create wrapper
     el.classList.add(this.config.classes.wrapper);
@@ -198,7 +203,7 @@ class ChickenPlayer {
 
     // Create elements
     const object = this.createObject(uid);
-    const cover = this.createCover();
+    const cover = this.createCover(el);
     const button = this.createButton();
 
     // Assemble structure
@@ -218,20 +223,31 @@ class ChickenPlayer {
 
   /**
    * Create the player cover element
+   * @param {HTMLElement} originalEl - Original player element
    * @returns {HTMLElement} Cover element
    */
-  createCover() {
+  createCover(originalEl) {
     const cover = document.createElement('div');
     cover.className = this.config.classes.cover;
 
-    const image = document.createElement('img');
-    image.src = this.config.picture.src;
-    image.width = this.config.picture.width;
-    image.height = this.config.picture.height;
-    image.alt = '';
-    image.setAttribute('loading', 'lazy');
+    // Check if there's an existing img tag in the original element
+    const existingImg = originalEl.querySelector('img');
 
-    cover.appendChild(image);
+    if (existingImg) {
+      // Move the existing image to the cover (don't clone, move it)
+      cover.appendChild(existingImg);
+    } else {
+      // Use default image from config
+      const image = document.createElement('img');
+      image.src = this.config.picture.src;
+      image.width = this.config.picture.width;
+      image.height = this.config.picture.height;
+      image.alt = '';
+      image.setAttribute('loading', 'lazy');
+
+      cover.appendChild(image);
+    }
+
     return cover;
   }
 
@@ -276,6 +292,12 @@ class ChickenPlayer {
       const object = el.querySelector(objectSelector);
       const play = el.querySelector(playSelector);
       const close = el.querySelector(closeSelector);
+
+      // Safety check: ensure all required elements exist
+      if (!object || !play) {
+        console.warn('Chicken Player: Required elements not found for player', el);
+        return;
+      }
 
       const type = el.getAttribute('data-type');
       const id = el.getAttribute('data-id');

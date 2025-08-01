@@ -66,6 +66,75 @@ import "chicken-player/style";
 </script>
 ```
 
+## Image de couverture
+
+Chicken Player vous offre plusieurs méthodes pour définir l'image de couverture qui s'affiche avant la lecture de la vidéo.
+
+### Méthode 1 : Image par défaut (configuration globale)
+
+Utilisez l'option `picture.src` dans la configuration pour définir une image de couverture par défaut pour tous les players :
+
+```javascript
+const player = new ChickenPlayer({
+  picture: {
+    src: 'https://example.com/thumbnail.jpg',
+    width: 600,
+    height: 400
+  }
+});
+```
+
+### Méthode 2 : Image personnalisée dans le HTML
+
+Placez directement une balise `<img>` dans votre div d'origine. Cette image sera automatiquement déplacée vers l'élément de couverture du player :
+
+```html
+<!-- Avec une image personnalisée -->
+<div class="chicken-player" data-type="youtube" data-id="VIDEO_ID">
+  <img src="https://example.com/my-thumbnail.jpg" alt="Ma vidéo" width="600" height="400">
+</div>
+
+<!-- Avec une image responsive -->
+<div class="chicken-player" data-type="vimeo" data-id="VIDEO_ID">
+  <img src="https://example.com/my-thumbnail.jpg" alt="Ma vidéo" style="width: 100%; height: auto;">
+</div>
+```
+
+**Avantages de cette méthode :**
+- L'image est définie directement dans le HTML, facilitant la gestion côté serveur
+- Tous les attributs de l'image (src, alt, width, height, style, etc.) sont préservés
+- Permet d'avoir des images différentes pour chaque player
+- Compatible avec les systèmes de gestion de contenu (CMS)
+
+### Priorité des méthodes
+
+1. **Image dans le HTML** : Si une balise `<img>` est présente dans le div d'origine, elle sera utilisée en priorité
+2. **Image par défaut** : Si aucune image n'est trouvée dans le HTML, l'image définie dans `picture.src` sera utilisée
+
+### Exemple complet
+
+```html
+<!-- HTML -->
+<div class="chicken-player" data-type="youtube" data-id="dQw4w9WgXcQ">
+  <img src="https://example.com/thumbnail.jpg" alt="Rick Astley - Never Gonna Give You Up">
+</div>
+
+<div class="chicken-player" data-type="vimeo" data-id="123456789">
+  <!-- Pas d'image dans le HTML, utilisera l'image par défaut -->
+</div>
+
+<!-- JavaScript -->
+<script>
+  const player = new ChickenPlayer({
+    picture: {
+      src: 'https://default-thumbnail.jpg', // Image par défaut
+      width: 600,
+      height: 400
+    }
+  });
+</script>
+```
+
 ## Apparence & Dimensions du player
 
 Contrairement à ce que nous pourrions penser, les attributs `width` et `height` ne permettent pas de modifier l'apparence du player, mais seulement les attributs intrinsèques (ex: attributs de l'iframe).
