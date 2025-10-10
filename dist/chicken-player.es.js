@@ -1,4 +1,4 @@
-class p {
+class d {
   constructor() {
     this.apiReady = !1, this.tempPlayerUid = null, this.tempPlayerId = null, this.videos = [], this.timers = [], this.config = {};
   }
@@ -8,10 +8,10 @@ class p {
    * @param {string} uid - Player unique ID
    * @param {Object} config - Player configuration
    */
-  initPlayer(e, t, s) {
+  initPlayer(e, t, i) {
     this.apiReady ? this.attemptPlayer(t, e) : (this.tempPlayerUid = t, this.tempPlayerId = e, this.config = {
       needConsent: !1,
-      ...s
+      ...i
     }, this.initApi());
   }
   /**
@@ -59,11 +59,11 @@ class p {
    * @param {string} uid - Player unique ID
    */
   onPlayerReady(e) {
-    const t = document.querySelector(`#${e}`), s = `.${this.config.classes.wrapper}`, i = t.closest(s);
+    const t = document.querySelector(`#${e}`), i = `.${this.config.classes.wrapper}`, s = t.closest(i);
     t.addEventListener("chickenPlayer.play", () => {
-      i.classList.remove(this.config.classes.stateLoading), i.classList.add(this.config.classes.statePlaying);
+      s.classList.remove(this.config.classes.stateLoading), s.classList.add(this.config.classes.statePlaying);
     }), t.addEventListener("chickenPlayer.stop", () => {
-      i.classList.remove(this.config.classes.statePlaying);
+      s.classList.remove(this.config.classes.statePlaying);
     }), this.startPlayer(e);
   }
   /**
@@ -81,7 +81,7 @@ class p {
     });
   }
 }
-class f extends p {
+class f extends d {
   /**
    * Initialize the Dailymotion API
    */
@@ -102,21 +102,21 @@ class f extends p {
     this.videos[e] || dailymotion.createPlayer(e, {
       video: t,
       ...this.config.player.dailymotion
-    }).then((s) => {
-      this.videos[e] = s, this.onPlayerReady(e), this.onPlayerStateChange(e);
+    }).then((i) => {
+      this.videos[e] = i, this.onPlayerReady(e), this.onPlayerStateChange(e);
     });
   }
 }
-const c = new f();
+const r = new f();
 window.dailymotion === void 0 && (window.dailymotion = {
   onScriptLoaded: () => {
-    c.apiReady = !0, c.attemptPlayer(
-      c.tempPlayerUid,
-      c.tempPlayerId
+    r.apiReady = !0, r.attemptPlayer(
+      r.tempPlayerUid,
+      r.tempPlayerId
     );
   }
 });
-class v extends p {
+class v extends d {
   /**
    * Initialize the YouTube API
    */
@@ -139,7 +139,7 @@ class v extends p {
       host: this.config.player.youtube.host,
       events: {
         onReady: () => this.onPlayerReady(e),
-        onStateChange: (s) => this.onYouTubeStateChange(e, s)
+        onStateChange: (i) => this.onYouTubeStateChange(e, i)
       },
       ...this.config.player.youtube
     }));
@@ -150,10 +150,10 @@ class v extends p {
    * @param {Object} event - YouTube player event
    */
   onYouTubeStateChange(e, t) {
-    const s = document.querySelector(`#${e}`);
+    const i = document.querySelector(`#${e}`);
     (t.data === 0 || t.data === 2) && (this.timers[e] = setTimeout(() => {
-      s.dispatchEvent(this.config.events.stop);
-    }, 1e3)), t.data === 1 && (clearTimeout(this.timers[e]), s.dispatchEvent(this.config.events.play));
+      i.dispatchEvent(this.config.events.stop);
+    }, 1e3)), t.data === 1 && (clearTimeout(this.timers[e]), i.dispatchEvent(this.config.events.play));
   }
   /**
    * Stop the YouTube player
@@ -170,14 +170,14 @@ class v extends p {
     document.querySelector(`#${e}`).dispatchEvent(this.config.events.play), this.videos[e].playVideo();
   }
 }
-const r = new v();
+const l = new v();
 window.onYouTubeIframeAPIReady = function() {
-  r.apiReady = !0, r.attemptPlayer(
-    r.tempPlayerUid,
-    r.tempPlayerId
+  l.apiReady = !0, l.attemptPlayer(
+    l.tempPlayerUid,
+    l.tempPlayerId
   );
 };
-class b extends p {
+class b extends d {
   /**
    * Initialize the Vimeo API
    */
@@ -201,14 +201,14 @@ class b extends p {
     }), this.onPlayerReady(e), this.onPlayerStateChange(e));
   }
 }
-const l = new b();
+const p = new b();
 window.onVimeoReadyCallback = function() {
-  l.apiReady = !0, l.attemptPlayer(
-    l.tempPlayerUid,
-    l.tempPlayerId
+  p.apiReady = !0, p.attemptPlayer(
+    p.tempPlayerUid,
+    p.tempPlayerId
   );
 };
-class P extends p {
+class P extends d {
   /**
    * Initialize the HTML5 player
    * No API initialization needed for HTML5
@@ -226,14 +226,14 @@ class P extends p {
    */
   createPlayer(e, t) {
     if (!this.videos[e]) {
-      const s = document.createElement("video");
-      s.id = e, s.className = "html5-player";
-      const i = this.config.player.html5;
-      s.controls = i.controls, s.preload = i.preload, s.autoplay = i.autoplay, s.loop = i.loop, s.muted = i.muted, s.width = i.width, s.height = i.height, s.setAttribute("playsinline", ""), s.setAttribute("webkit-playsinline", ""), i.poster && s.setAttribute("poster", i.poster), i.crossorigin && s.setAttribute("crossorigin", i.crossorigin), i.disablePictureInPicture && s.setAttribute("disablePictureInPicture", ""), i.disableRemotePlayback && s.setAttribute("disableRemotePlayback", ""), i.controlsList && s.setAttribute("controlsList", i.controlsList);
+      const i = document.createElement("video");
+      i.id = e, i.className = "html5-player";
+      const s = this.config.player.html5;
+      i.controls = s.controls, i.preload = s.preload, i.autoplay = s.autoplay, i.loop = s.loop, i.muted = s.muted, i.width = s.width, i.height = s.height, i.setAttribute("playsinline", ""), i.setAttribute("webkit-playsinline", ""), s.poster && i.setAttribute("poster", s.poster), s.crossorigin && i.setAttribute("crossorigin", s.crossorigin), s.disablePictureInPicture && i.setAttribute("disablePictureInPicture", ""), s.disableRemotePlayback && i.setAttribute("disableRemotePlayback", ""), s.controlsList && i.setAttribute("controlsList", s.controlsList);
       const o = document.createElement("source");
-      o.src = t, o.type = this.getVideoType(t), s.appendChild(o);
+      o.src = t, o.type = this.getVideoType(t), i.appendChild(o);
       const n = document.querySelector(`#${e}`);
-      n && n.parentNode.replaceChild(s, n), this.videos[e] = s, this.onPlayerReady(e), this.onPlayerStateChange(e);
+      n && n.parentNode.replaceChild(i, n), this.videos[e] = i, this.onPlayerReady(e), this.onPlayerStateChange(e);
     }
   }
   /**
@@ -301,8 +301,8 @@ class w {
         `, e.appendChild(t);
   }
   setPlayerConsent() {
-    var e, t, s, i, o, n;
-    (t = (e = this.config.player[this.playerType]) == null ? void 0 : e.cookies) != null && t.active && (this.needConsent = this.config.player[this.playerType].cookies.active, this.wrapper = document.querySelector(`.${this.config.classes.wrapper}.player--${this.playerType}`)), (i = (s = this.config.player[this.playerType]) == null ? void 0 : s.cookies) != null && i.eventConsent && (this.consentEvent = this.config.player[this.playerType].cookies.eventConsent), (n = (o = this.config.player[this.playerType]) == null ? void 0 : o.cookies) != null && n.eventReject && (this.rejectEvent = this.config.player[this.playerType].cookies.eventReject), this.consentState = !this.needConsent;
+    var e, t, i, s, o, n;
+    (t = (e = this.config.player[this.playerType]) == null ? void 0 : e.cookies) != null && t.active && (this.needConsent = this.config.player[this.playerType].cookies.active, this.wrapper = document.querySelector(`.${this.config.classes.wrapper}.player--${this.playerType}`)), (s = (i = this.config.player[this.playerType]) == null ? void 0 : i.cookies) != null && s.eventConsent && (this.consentEvent = this.config.player[this.playerType].cookies.eventConsent), (n = (o = this.config.player[this.playerType]) == null ? void 0 : o.cookies) != null && n.eventReject && (this.rejectEvent = this.config.player[this.playerType].cookies.eventReject), this.consentState = !this.needConsent;
   }
   hasConsent() {
     return this.consentState;
@@ -399,13 +399,13 @@ const k = {
     types: ["youtube", "dailymotion", "vimeo"]
   }
 };
-class E {
+class S {
   /**
    * Initialize a new Chicken Player instance
    * @param {Object} opts - User configuration options
    */
   constructor(e = {}) {
-    this.config = this.mergeConfig(k, e), typeof window < "u" && typeof document < "u" && this.init();
+    this.config = this.mergeConfig(k, e), this.players = /* @__PURE__ */ new Map(), typeof window < "u" && typeof document < "u" && this.init();
   }
   /**
    * Initialize the player with the current configuration
@@ -428,10 +428,10 @@ class E {
    * @returns {Object} Merged configuration
    */
   mergeConfig(e, t) {
-    const s = { ...e };
-    for (const i in t)
-      t.hasOwnProperty(i) && (typeof t[i] == "object" && t[i] !== null && typeof e[i] == "object" && e[i] !== null ? s[i] = this.mergeConfig(e[i], t[i]) : s[i] = t[i]);
-    return s;
+    const i = { ...e };
+    for (const s in t)
+      t.hasOwnProperty(s) && (typeof t[s] == "object" && t[s] !== null && typeof e[s] == "object" && e[s] !== null ? i[s] = this.mergeConfig(e[s], t[s]) : i[s] = t[s]);
+    return i;
   }
   /**
    * Create the player markup structure
@@ -441,8 +441,8 @@ class E {
   createMarkup(e) {
     let t = e.getAttribute("id");
     t || (t = "chickenPlayer_" + Math.random().toString(36).substr(2, 9), e.setAttribute("id", t)), e.classList.add(this.config.classes.wrapper), e.classList.add("player--" + e.getAttribute("data-type"));
-    const s = this.createObject(t), i = this.createCover(e), o = this.createButton();
-    return e.appendChild(s), e.appendChild(i), i.appendChild(o), e;
+    const i = this.createObject(t), s = this.createCover(e), o = this.createButton();
+    return e.appendChild(i), e.appendChild(s), s.appendChild(o), e;
   }
   createObject(e) {
     const t = document.createElement("div");
@@ -456,12 +456,12 @@ class E {
   createCover(e) {
     const t = document.createElement("div");
     t.className = this.config.classes.cover;
-    const s = e.querySelector("img");
-    if (s)
-      t.appendChild(s);
-    else {
-      const i = document.createElement("img");
-      i.src = this.config.picture.src, i.width = this.config.picture.width, i.height = this.config.picture.height, i.alt = "", i.setAttribute("loading", "lazy"), t.appendChild(i);
+    const i = e.querySelector("img");
+    if (i)
+      t.appendChild(i);
+    else if (this.config.picture !== !1) {
+      const s = document.createElement("img");
+      s.src = this.config.picture.src, s.width = this.config.picture.width, s.height = this.config.picture.height, s.alt = "", s.setAttribute("loading", "lazy"), t.appendChild(s);
     }
     return t;
   }
@@ -474,31 +474,31 @@ class E {
     e.type = "button", e.className = this.config.classes.button;
     const t = document.createElement("span");
     t.className = this.config.classes.buttonIcon;
-    const s = document.createElement("div");
-    s.className = this.config.classes.buttonSpinner;
-    for (let i = 0; i < 4; i++) {
+    const i = document.createElement("div");
+    i.className = this.config.classes.buttonSpinner;
+    for (let s = 0; s < 4; s++) {
       const o = document.createElement("div");
-      s.appendChild(o);
+      i.appendChild(o);
     }
-    return e.appendChild(t), e.appendChild(s), e;
+    return e.appendChild(t), e.appendChild(i), e;
   }
   /**
    * Bind event listeners to player elements
    * Only binds events to elements that haven't been initialized yet
    */
   bindEvents() {
-    const e = this.config.selector, t = `.${this.config.classes.object}`, s = `.${this.config.classes.button}`, i = `.${this.config.classes.close}`;
+    const e = this.config.selector, t = `.${this.config.classes.object}`, i = `.${this.config.classes.button}`, s = `.${this.config.classes.close}`;
     document.querySelectorAll(`${e}:not(.${this.config.classes.stateReady})`).forEach((o) => {
-      const n = o.querySelector(t), h = o.querySelector(s), y = o.querySelector(i);
-      if (!n || !h) {
+      const n = o.querySelector(t), a = o.querySelector(i), h = o.querySelector(s);
+      if (!n || !a) {
         console.warn("Chicken Player: Required elements not found for player", o);
         return;
       }
-      const d = o.getAttribute("data-type"), m = o.getAttribute("data-id"), g = n.getAttribute("id");
-      h.addEventListener("click", () => {
-        o.classList.add(this.config.classes.stateLoading), this.handlePlay(d, m, g);
-      }), y && y.addEventListener("click", () => {
-        o.classList.remove(this.config.classes.statePlaying), this.handleStop(d, m);
+      const y = o.getAttribute("data-type"), m = o.getAttribute("data-id"), g = n.getAttribute("id");
+      a.addEventListener("click", () => {
+        o.classList.add(this.config.classes.stateLoading), this.handlePlay(y, m, g);
+      }), h && h.addEventListener("click", () => {
+        o.classList.remove(this.config.classes.statePlaying), this.handleStop(y, m);
       }), o.classList.add(this.config.classes.stateReady);
     });
   }
@@ -508,19 +508,19 @@ class E {
    * @param {string} id - Video ID or URL
    * @param {string} uid - Player unique ID
    */
-  handlePlay(e, t, s) {
+  handlePlay(e, t, i) {
     switch (e) {
       case "youtube":
-        r.initPlayer(t, s, this.config);
+        l.initPlayer(t, i, this.config);
         break;
       case "dailymotion":
-        c.initPlayer(t, s, this.config);
+        r.initPlayer(t, i, this.config);
         break;
       case "vimeo":
-        l.initPlayer(t, s, this.config);
+        p.initPlayer(t, i, this.config);
         break;
       case "html5":
-        u.initPlayer(t, s, this.config);
+        u.initPlayer(t, i, this.config);
         break;
       default:
         console.error("Unsupported player type:", e);
@@ -528,20 +528,48 @@ class E {
     }
   }
   /**
+   * Play all players or a specific player
+   * @param {string} [selector] - Optional CSS selector to target specific players
+   */
+  play(e = null) {
+    const t = e || this.config.selector;
+    document.querySelectorAll(t).forEach((s) => {
+      const o = s.getAttribute("data-type"), n = s.getAttribute("data-id"), a = s.querySelector(`.${this.config.classes.object}`);
+      if (o && n && a) {
+        const h = a.getAttribute("id");
+        s.classList.add(this.config.classes.stateLoading), this.handlePlay(o, n, h);
+      }
+    });
+  }
+  /**
+   * Stop all players or a specific player
+   * @param {string} [selector] - Optional CSS selector to target specific players
+   */
+  stop(e = null) {
+    const t = e || this.config.selector;
+    document.querySelectorAll(t).forEach((s) => {
+      const o = s.getAttribute("data-type"), n = s.querySelector(`.${this.config.classes.object}`);
+      if (o && n) {
+        const a = n.getAttribute("id");
+        s.classList.remove(this.config.classes.statePlaying), this.handleStop(o, a);
+      }
+    });
+  }
+  /**
    * Handle stop action based on player type
    * @param {string} type - Player type (youtube, dailymotion, vimeo, html5)
-   * @param {string} id - Video ID or URL
+   * @param {string} uid - Player unique ID
    */
   handleStop(e, t) {
     switch (e) {
       case "youtube":
-        r.stopPlayer(t);
+        l.stopPlayer(t);
         break;
       case "dailymotion":
-        c.stopPlayer(t);
+        r.stopPlayer(t);
         break;
       case "vimeo":
-        l.stopPlayer(t);
+        p.stopPlayer(t);
         break;
       case "html5":
         u.stopPlayer(t);
@@ -553,5 +581,5 @@ class E {
   }
 }
 export {
-  E as default
+  S as default
 };

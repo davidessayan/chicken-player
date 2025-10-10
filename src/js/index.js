@@ -127,6 +127,7 @@ class ChickenPlayer {
    */
   constructor(opts = {}) {
     this.config = this.mergeConfig(defaultConfig, opts);
+    this.players = new Map(); // Track player instances
 
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.init();
@@ -236,8 +237,8 @@ class ChickenPlayer {
     if (existingImg) {
       // Move the existing image to the cover (don't clone, move it)
       cover.appendChild(existingImg);
-    } else {
-      // Use default image from config
+    } else if (this.config.picture !== false) {
+      // Use default image from config only if picture is not disabled
       const image = document.createElement('img');
       image.src = this.config.picture.src;
       image.width = this.config.picture.width;
@@ -247,6 +248,7 @@ class ChickenPlayer {
 
       cover.appendChild(image);
     }
+    // If picture is false and no existing image, no image will be added
 
     return cover;
   }
@@ -349,29 +351,71 @@ class ChickenPlayer {
   }
 
   /**
+   * Play all players or a specific player
+   * @param {string} [selector] - Optional CSS selector to target specific players
+   */
+  play(selector = null) {
+    const targetSelector = selector || this.config.selector;
+    const players = document.querySelectorAll(targetSelector);
+
+    players.forEach(playerEl => {
+      const type = playerEl.getAttribute('data-type');
+      const id = playerEl.getAttribute('data-id');
+      const object = playerEl.querySelector(`.${this.config.classes.object}`);
+
+      if (type && id && object) {
+        const uid = object.getAttribute('id');
+        playerEl.classList.add(this.config.classes.stateLoading);
+        this.handlePlay(type, id, uid);
+      }
+    });
+  }
+
+  /**
+   * Stop all players or a specific player
+   * @param {string} [selector] - Optional CSS selector to target specific players
+   */
+  stop(selector = null) {
+    const targetSelector = selector || this.config.selector;
+    const players = document.querySelectorAll(targetSelector);
+
+    players.forEach(playerEl => {
+      const type = playerEl.getAttribute('data-type');
+      const object = playerEl.querySelector(`.${this.config.classes.object}`);
+
+      if (type && object) {
+        const uid = object.getAttribute('id');
+        playerEl.classList.remove(this.config.classes.statePlaying);
+        this.handleStop(type, uid);
+      }
+    });
+  }
+
+  /**
    * Handle stop action based on player type
    * @param {string} type - Player type (youtube, dailymotion, vimeo, html5)
-   * @param {string} id - Video ID or URL
+   * @param {string} uid - Player unique ID
    */
-  handleStop(type, id) {
+  handleStop(type, uid) {
     switch (type) {
       case 'youtube':
-        chickenYoutube.stopPlayer(id);
+        chickenYoutube.stopPlayer(uid);
         break;
       case 'dailymotion':
-        chickenDailymotion.stopPlayer(id);
+        chickenDailymotion.stopPlayer(uid);
         break;
       case 'vimeo':
-        chickenVimeo.stopPlayer(id);
+        chickenVimeo.stopPlayer(uid);
         break;
       case 'html5':
-        chickenHtml5.stopPlayer(id);
+        chickenHtml5.stopPlayer(uid);
         break;
       default:
         console.error('Unsupported player type:', type);
         break;
     }
   }
+
 }
 
 export default ChickenPlayer;

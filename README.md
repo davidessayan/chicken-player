@@ -70,7 +70,19 @@ import "chicken-player/style";
 
 Chicken Player vous offre plusieurs méthodes pour définir l'image de couverture qui s'affiche avant la lecture de la vidéo.
 
-### Méthode 1 : Image par défaut (configuration globale)
+### Méthode 1 : Désactiver les images par défaut
+
+Définissez `picture: false` pour désactiver complètement la génération d'images par défaut :
+
+```javascript
+const player = new ChickenPlayer({
+  picture: false
+});
+```
+
+Avec cette configuration, aucune image ne sera générée automatiquement, sauf si une image est présente dans le HTML. Si aucune image n'est trouvée dans le HTML et que `picture` est `false`, aucun élément image ne sera créé.
+
+### Méthode 2 : Image par défaut (configuration globale)
 
 Utilisez l'option `picture.src` dans la configuration pour définir une image de couverture par défaut pour tous les players :
 
@@ -84,7 +96,7 @@ const player = new ChickenPlayer({
 });
 ```
 
-### Méthode 2 : Image personnalisée dans le HTML
+### Méthode 3 : Image personnalisée dans le HTML
 
 Placez directement une balise `<img>` dans votre div d'origine. Cette image sera automatiquement déplacée vers l'élément de couverture du player :
 
@@ -109,7 +121,8 @@ Placez directement une balise `<img>` dans votre div d'origine. Cette image sera
 ### Priorité des méthodes
 
 1. **Image dans le HTML** : Si une balise `<img>` est présente dans le div d'origine, elle sera utilisée en priorité
-2. **Image par défaut** : Si aucune image n'est trouvée dans le HTML, l'image définie dans `picture.src` sera utilisée
+2. **Image par défaut** : Si aucune image n'est trouvée dans le HTML et que `picture` n'est pas `false`, l'image définie dans `picture.src` sera utilisée
+3. **Aucune image** : Si `picture: false` et aucune image dans le HTML, aucun élément image ne sera généré
 
 ### Exemple complet
 
@@ -123,6 +136,10 @@ Placez directement une balise `<img>` dans votre div d'origine. Cette image sera
   <!-- Pas d'image dans le HTML, utilisera l'image par défaut -->
 </div>
 
+<div class="chicken-player" data-type="dailymotion" data-id="x123456">
+  <!-- Pas d'image dans le HTML, aucune image ne sera générée -->
+</div>
+
 <!-- JavaScript -->
 <script>
   const player = new ChickenPlayer({
@@ -131,6 +148,26 @@ Placez directement une balise `<img>` dans votre div d'origine. Cette image sera
       width: 600,
       height: 400
     }
+  });
+</script>
+```
+
+### Exemple avec picture: false
+
+```html
+<!-- HTML -->
+<div class="chicken-player" data-type="youtube" data-id="dQw4w9WgXcQ">
+  <img src="https://example.com/thumbnail.jpg" alt="Rick Astley - Never Gonna Give You Up">
+</div>
+
+<div class="chicken-player" data-type="vimeo" data-id="123456789">
+  <!-- Pas d'image dans le HTML, aucune image ne sera générée -->
+</div>
+
+<!-- JavaScript -->
+<script>
+  const player = new ChickenPlayer({
+    picture: false // Désactive les images par défaut
   });
 </script>
 ```
@@ -177,6 +214,7 @@ Vous pouvez donc modifier la valeur de `padding-bottom` pour modifier son ratio,
 | `classes.stateLoading` | string | Classe CSS de l'état chargement | `player--loading` |
 | `classes.stateError` | string | Classe CSS de l'état erreur | `player--error` |
 | `classes.stateReady` | string | Classe CSS de l'état prêt | `player--ready` |
+| `picture` | boolean\|object | Configuration de l'image de couverture. `false` pour désactiver | `{src: '...', width: 600, height: 400}` |
 | `picture.src` | string | URL de l'image de couverture | `https://unpkg.com/chicken-player/dist/placeholder.png` |
 | `picture.width` | number | Largeur de l'image de couverture | 600 |
 | `picture.height` | number | Hauteur de l'image de couverture | 400 |
@@ -238,6 +276,76 @@ html5: {
   disableRemotePlayback: false,
   controlsList: ''
 }
+```
+
+## API JavaScript
+
+### Méthodes disponibles
+
+#### `play(selector)`
+Lance la lecture de tous les lecteurs ou d'un lecteur spécifique.
+
+**Paramètres :**
+- `selector` (string, optionnel) : Sélecteur CSS pour cibler un lecteur spécifique
+
+**Exemples :**
+```javascript
+const player = new ChickenPlayer();
+
+// Lancer tous les lecteurs
+player.play();
+
+// Lancer un lecteur spécifique
+player.play('#my-video-player');
+player.play('.youtube-player');
+```
+
+#### `stop(selector)`
+Arrête tous les lecteurs ou un lecteur spécifique.
+
+**Paramètres :**
+- `selector` (string, optionnel) : Sélecteur CSS pour cibler un lecteur spécifique
+
+**Exemples :**
+```javascript
+const player = new ChickenPlayer();
+
+// Arrêter tous les lecteurs
+player.stop();
+
+// Arrêter un lecteur spécifique
+player.stop('#my-video-player');
+player.stop('.vimeo-player');
+```
+
+### Exemple d'utilisation complète
+
+```javascript
+// Créer une instance
+const myPlayer = new ChickenPlayer({
+  selector: '.chicken-player',
+  player: {
+    youtube: {
+      playerVars: {
+        autoplay: 0,
+        controls: 1
+      }
+    }
+  }
+});
+
+// Contrôler les lecteurs programmatiquement
+document.getElementById('play-all').addEventListener('click', () => {
+  myPlayer.play();
+});
+
+document.getElementById('stop-all').addEventListener('click', () => {
+  myPlayer.stop();
+});
+
+document.getElementById('play-first').addEventListener('click', () => {
+  myPlayer.play('.chicken-player:first-child');
+});
 ```
 
 ## Événements de lecture

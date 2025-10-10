@@ -50,6 +50,8 @@
 
     <div id="mode-esm" class="test-block" style="display:none">
         <h2>ESM (native import)</h2>
+        <button id="btn-play-esm-1">Play</button>
+        <button id="btn-stop-esm-1">Stop</button>
         <div class="chicken-player-esm-1" data-type="youtube" data-id="IPfdLVxjJeo">
             <img src="https://img.youtube.com/vi/IPfdLVxjJeo/maxresdefault.jpg" alt="YouTube Video">
         </div>
@@ -114,7 +116,7 @@
             script.type = 'module';
             script.innerHTML = `
         import ChickenPlayer from '/dist/chicken-player.es.js?t=${timestamp}';
-        window.playerESM1 = new ChickenPlayer({ selector: '.chicken-player-esm-1' });
+        window.playerESM1 = new ChickenPlayer({ selector: '.chicken-player-esm-1', picture: false });
         window.playerESM2 = new ChickenPlayer({ selector: '.chicken-player-esm-2' });
         console.log('[ChickenPlayer-ESM]', window.playerESM1, window.playerESM2);
       `;
@@ -134,6 +136,13 @@
             };
             document.body.appendChild(script);
         }
+
+        document.getElementById('btn-play-esm-1').onclick = () => {
+            window.playerESM1.play();
+        };
+        document.getElementById('btn-stop-esm-1').onclick = () => {
+            window.playerESM1.stop();
+        };
     </script>
 </body>
 
