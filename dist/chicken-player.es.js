@@ -1,6 +1,6 @@
-class d {
+class p {
   constructor() {
-    this.apiReady = !1, this.tempPlayerUid = null, this.tempPlayerId = null, this.videos = [], this.timers = [], this.config = {};
+    this.apiReady = !1, this.apiLoading = !1, this.tempPlayerUid = null, this.tempPlayerId = null, this.pendingPlayers = [], this.videos = [], this.timers = [], this.config = {};
   }
   /**
    * Initialize the player with configuration
@@ -9,10 +9,33 @@ class d {
    * @param {Object} config - Player configuration
    */
   initPlayer(e, t, i) {
-    this.apiReady ? this.attemptPlayer(t, e) : (this.tempPlayerUid = t, this.tempPlayerId = e, this.config = {
+    this.config = {
       needConsent: !1,
       ...i
-    }, this.initApi());
+    }, this.apiReady ? this.attemptPlayer(t, e) : (this.tempPlayerUid = t, this.tempPlayerId = e, this.queuePlayer(t, e), this.apiLoading || (this.apiLoading = !0, this.initApi() === !1 && (this.apiLoading = !1)));
+  }
+  /**
+   * Queue player initialization while waiting for API readiness
+   * @param {string} uid - Player unique ID
+   * @param {string} id - Video ID
+   */
+  queuePlayer(e, t) {
+    this.pendingPlayers.find((s) => s.uid === e) || this.pendingPlayers.push({ uid: e, id: t });
+  }
+  /**
+   * Flush all pending players once API is ready
+   */
+  flushPendingPlayers() {
+    const e = [...this.pendingPlayers];
+    this.pendingPlayers = [], e.forEach(({ uid: t, id: i }) => {
+      this.attemptPlayer(t, i);
+    });
+  }
+  /**
+   * Mark API as ready and process pending players
+   */
+  onApiReady() {
+    this.apiReady = !0, this.apiLoading = !1, this.flushPendingPlayers();
   }
   /**
    * Initialize the video API
@@ -81,7 +104,7 @@ class d {
     });
   }
 }
-class f extends d {
+class b extends p {
   /**
    * Initialize the Dailymotion API
    */
@@ -107,20 +130,30 @@ class f extends d {
     });
   }
 }
-const r = new f();
-window.dailymotion === void 0 && (window.dailymotion = {
-  onScriptLoaded: () => {
-    r.apiReady = !0, r.attemptPlayer(
-      r.tempPlayerUid,
-      r.tempPlayerId
-    );
-  }
-});
-class v extends d {
+const l = new b();
+if (window.dailymotion === void 0)
+  window.dailymotion = {
+    onScriptLoaded: () => {
+      l.onApiReady();
+    }
+  };
+else {
+  const a = window.dailymotion.onScriptLoaded;
+  window.dailymotion.onScriptLoaded = () => {
+    typeof a == "function" && a(), l.onApiReady();
+  };
+}
+class P extends p {
   /**
    * Initialize the YouTube API
    */
   initApi() {
+    if (window.YT && typeof window.YT.Player == "function") {
+      this.onApiReady();
+      return;
+    }
+    if (document.querySelector('script[src*="youtube.com/iframe_api"]'))
+      return;
     const e = document.createElement("script");
     e.src = "//www.youtube.com/iframe_api";
     const t = document.getElementsByTagName("script")[0];
@@ -170,14 +203,11 @@ class v extends d {
     document.querySelector(`#${e}`).dispatchEvent(this.config.events.play), this.videos[e].playVideo();
   }
 }
-const l = new v();
+const h = new P(), f = window.onYouTubeIframeAPIReady;
 window.onYouTubeIframeAPIReady = function() {
-  l.apiReady = !0, l.attemptPlayer(
-    l.tempPlayerUid,
-    l.tempPlayerId
-  );
+  typeof f == "function" && f(), h.onApiReady();
 };
-class b extends d {
+class w extends p {
   /**
    * Initialize the Vimeo API
    */
@@ -201,14 +231,11 @@ class b extends d {
     }), this.onPlayerReady(e), this.onPlayerStateChange(e));
   }
 }
-const p = new b();
+const d = new w(), m = window.onVimeoReadyCallback;
 window.onVimeoReadyCallback = function() {
-  p.apiReady = !0, p.attemptPlayer(
-    p.tempPlayerUid,
-    p.tempPlayerId
-  );
+  typeof m == "function" && m(), d.onApiReady();
 };
-class P extends d {
+class k extends p {
   /**
    * Initialize the HTML5 player
    * No API initialization needed for HTML5
@@ -280,8 +307,8 @@ class P extends d {
     });
   }
 }
-const u = new P();
-class w {
+const g = new k();
+class S {
   constructor(e, t) {
     this.consentState = !1, this.needConsent = t.cookies.active, this.consentEvent = t.cookies.eventConsent, this.rejectEvent = t.cookies.eventReject, this.consentState = !this.needConsent, this.config = t, this.playerType = e, this.wrapper = document.querySelector(`.${t.classes.wrapper}`), this.setPlayerConsent(), this.needConsent && (this.setConsentMessage(), this.setWrapperState()), this.needConsent && this.consentEvent && window.addEventListener(this.consentEvent, () => {
       this.consentState = !0, this.setWrapperState();
@@ -308,7 +335,7 @@ class w {
     return this.consentState;
   }
 }
-const k = {
+const C = {
   selector: ".chicken-player",
   player: {
     width: 600,
@@ -399,13 +426,13 @@ const k = {
     types: ["youtube", "dailymotion", "vimeo"]
   }
 };
-class S {
+class E {
   /**
    * Initialize a new Chicken Player instance
    * @param {Object} opts - User configuration options
    */
   constructor(e = {}) {
-    this.config = this.mergeConfig(k, e), this.players = /* @__PURE__ */ new Map(), typeof window < "u" && typeof document < "u" && this.init();
+    this.config = this.mergeConfig(C, e), this.players = /* @__PURE__ */ new Map(), typeof window < "u" && typeof document < "u" && this.init();
   }
   /**
    * Initialize the player with the current configuration
@@ -418,7 +445,7 @@ class S {
         e.parentNode.replaceChild(t, e);
       }
     }), this.config.cookies.types.forEach((e) => {
-      new w(e, this.config);
+      new S(e, this.config);
     }), this.bindEvents();
   }
   /**
@@ -489,16 +516,16 @@ class S {
   bindEvents() {
     const e = this.config.selector, t = `.${this.config.classes.object}`, i = `.${this.config.classes.button}`, s = `.${this.config.classes.close}`;
     document.querySelectorAll(`${e}:not(.${this.config.classes.stateReady})`).forEach((o) => {
-      const n = o.querySelector(t), a = o.querySelector(i), h = o.querySelector(s);
-      if (!n || !a) {
+      const n = o.querySelector(t), c = o.querySelector(i), r = o.querySelector(s);
+      if (!n || !c) {
         console.warn("Chicken Player: Required elements not found for player", o);
         return;
       }
-      const y = o.getAttribute("data-type"), m = o.getAttribute("data-id"), g = n.getAttribute("id");
-      a.addEventListener("click", () => {
-        o.classList.add(this.config.classes.stateLoading), this.handlePlay(y, m, g);
-      }), h && h.addEventListener("click", () => {
-        o.classList.remove(this.config.classes.statePlaying), this.handleStop(y, m);
+      const y = o.getAttribute("data-type"), u = o.getAttribute("data-id"), v = n.getAttribute("id");
+      c.addEventListener("click", () => {
+        o.classList.add(this.config.classes.stateLoading), this.handlePlay(y, u, v);
+      }), r && r.addEventListener("click", () => {
+        o.classList.remove(this.config.classes.statePlaying), this.handleStop(y, u);
       }), o.classList.add(this.config.classes.stateReady);
     });
   }
@@ -511,16 +538,16 @@ class S {
   handlePlay(e, t, i) {
     switch (e) {
       case "youtube":
-        l.initPlayer(t, i, this.config);
+        h.initPlayer(t, i, this.config);
         break;
       case "dailymotion":
-        r.initPlayer(t, i, this.config);
+        l.initPlayer(t, i, this.config);
         break;
       case "vimeo":
-        p.initPlayer(t, i, this.config);
+        d.initPlayer(t, i, this.config);
         break;
       case "html5":
-        u.initPlayer(t, i, this.config);
+        g.initPlayer(t, i, this.config);
         break;
       default:
         console.error("Unsupported player type:", e);
@@ -534,10 +561,10 @@ class S {
   play(e = null) {
     const t = e || this.config.selector;
     document.querySelectorAll(t).forEach((s) => {
-      const o = s.getAttribute("data-type"), n = s.getAttribute("data-id"), a = s.querySelector(`.${this.config.classes.object}`);
-      if (o && n && a) {
-        const h = a.getAttribute("id");
-        s.classList.add(this.config.classes.stateLoading), this.handlePlay(o, n, h);
+      const o = s.getAttribute("data-type"), n = s.getAttribute("data-id"), c = s.querySelector(`.${this.config.classes.object}`);
+      if (o && n && c) {
+        const r = c.getAttribute("id");
+        s.classList.add(this.config.classes.stateLoading), this.handlePlay(o, n, r);
       }
     });
   }
@@ -550,8 +577,8 @@ class S {
     document.querySelectorAll(t).forEach((s) => {
       const o = s.getAttribute("data-type"), n = s.querySelector(`.${this.config.classes.object}`);
       if (o && n) {
-        const a = n.getAttribute("id");
-        s.classList.remove(this.config.classes.statePlaying), this.handleStop(o, a);
+        const c = n.getAttribute("id");
+        s.classList.remove(this.config.classes.statePlaying), this.handleStop(o, c);
       }
     });
   }
@@ -563,16 +590,16 @@ class S {
   handleStop(e, t) {
     switch (e) {
       case "youtube":
-        l.stopPlayer(t);
+        h.stopPlayer(t);
         break;
       case "dailymotion":
-        r.stopPlayer(t);
+        l.stopPlayer(t);
         break;
       case "vimeo":
-        p.stopPlayer(t);
+        d.stopPlayer(t);
         break;
       case "html5":
-        u.stopPlayer(t);
+        g.stopPlayer(t);
         break;
       default:
         console.error("Unsupported player type:", e);
@@ -581,5 +608,5 @@ class S {
   }
 }
 export {
-  S as default
+  E as default
 };

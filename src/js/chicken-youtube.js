@@ -12,6 +12,15 @@ class ChickenYoutube extends ChickenPlayerBase {
    * Initialize the YouTube API
    */
   initApi() {
+    if (window.YT && typeof window.YT.Player === 'function') {
+      this.onApiReady();
+      return;
+    }
+
+    if (document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+      return;
+    }
+
     const tag = document.createElement("script");
     tag.src = "//www.youtube.com/iframe_api";
 
@@ -86,10 +95,12 @@ const chickenYoutube = new ChickenYoutube();
 export default chickenYoutube;
 
 /* After YouTube API init */
+const previousOnYouTubeIframeAPIReady = window.onYouTubeIframeAPIReady;
+
 window.onYouTubeIframeAPIReady = function () {
-  chickenYoutube.apiReady = true;
-  chickenYoutube.attemptPlayer(
-    chickenYoutube.tempPlayerUid,
-    chickenYoutube.tempPlayerId
-  );
+  if (typeof previousOnYouTubeIframeAPIReady === 'function') {
+    previousOnYouTubeIframeAPIReady();
+  }
+
+  chickenYoutube.onApiReady();
 };

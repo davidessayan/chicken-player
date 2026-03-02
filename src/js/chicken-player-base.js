@@ -8,8 +8,10 @@
 class ChickenPlayerBase {
     constructor() {
         this.apiReady = false;
+        this.apiLoading = false;
         this.tempPlayerUid = null;
         this.tempPlayerId = null;
+        this.pendingPlayers = [];
         this.videos = [];
         this.timers = [];
         this.config = {};
@@ -22,17 +24,60 @@ class ChickenPlayerBase {
      * @param {Object} config - Player configuration
      */
     initPlayer(id, uid, config) {
+        this.config = {
+            needConsent: false,
+            ...config
+        };
+
         if (!this.apiReady) {
             this.tempPlayerUid = uid;
             this.tempPlayerId = id;
-            this.config = {
-                needConsent: false,
-                ...config
-            };
-            this.initApi();
+            this.queuePlayer(uid, id);
+
+            if (!this.apiLoading) {
+                this.apiLoading = true;
+                const initResult = this.initApi();
+                if (initResult === false) {
+                    this.apiLoading = false;
+                }
+            }
         } else {
             this.attemptPlayer(uid, id);
         }
+    }
+
+    /**
+     * Queue player initialization while waiting for API readiness
+     * @param {string} uid - Player unique ID
+     * @param {string} id - Video ID
+     */
+    queuePlayer(uid, id) {
+        const alreadyQueued = this.pendingPlayers.find(player => player.uid === uid);
+
+        if (!alreadyQueued) {
+            this.pendingPlayers.push({ uid, id });
+        }
+    }
+
+    /**
+     * Flush all pending players once API is ready
+     */
+    flushPendingPlayers() {
+        const players = [...this.pendingPlayers];
+        this.pendingPlayers = [];
+
+        players.forEach(({ uid, id }) => {
+            this.attemptPlayer(uid, id);
+        });
+    }
+
+    /**
+     * Mark API as ready and process pending players
+     */
+    onApiReady() {
+        this.apiReady = true;
+        this.apiLoading = false;
+        this.flushPendingPlayers();
     }
 
     /**

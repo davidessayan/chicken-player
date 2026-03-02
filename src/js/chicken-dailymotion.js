@@ -55,11 +55,16 @@ export default chickenDailymotion;
 if (window.dailymotion === undefined) {
   window.dailymotion = {
     onScriptLoaded: () => {
-      chickenDailymotion.apiReady = true;
-      chickenDailymotion.attemptPlayer(
-        chickenDailymotion.tempPlayerUid,
-        chickenDailymotion.tempPlayerId
-      );
+      chickenDailymotion.onApiReady();
     }
+  };
+} else {
+  const previousOnScriptLoaded = window.dailymotion.onScriptLoaded;
+  window.dailymotion.onScriptLoaded = () => {
+    if (typeof previousOnScriptLoaded === 'function') {
+      previousOnScriptLoaded();
+    }
+
+    chickenDailymotion.onApiReady();
   };
 }

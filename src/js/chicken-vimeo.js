@@ -47,10 +47,12 @@ const chickenVimeo = new ChickenVimeo();
 export default chickenVimeo;
 
 /* After vimeo API init */
+const previousOnVimeoReadyCallback = window.onVimeoReadyCallback;
+
 window.onVimeoReadyCallback = function () {
-  chickenVimeo.apiReady = true;
-  chickenVimeo.attemptPlayer(
-    chickenVimeo.tempPlayerUid,
-    chickenVimeo.tempPlayerId
-  );
+  if (typeof previousOnVimeoReadyCallback === 'function') {
+    previousOnVimeoReadyCallback();
+  }
+
+  chickenVimeo.onApiReady();
 };
