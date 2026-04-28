@@ -46,13 +46,13 @@ class ChickenPlayerConsent {
         const cover = this.wrapper.querySelector(`.${this.config.classes.cover}`);
         if (!cover) return;
 
-        const consentMessage = document.createElement('div');
-        consentMessage.className = this.config.classes.consentMessage;
-        consentMessage.innerHTML = `
-            <p>${this.config.cookies.message}</p>
-        `;
+        // Ne pas ajouter si déjà présent
+        if (cover.querySelector(`.${this.config.classes.consentMessage}`)) return;
 
-        cover.appendChild(consentMessage);
+        const div = document.createElement("div");
+        div.className = this.config.classes.consentMessage;
+        div.innerHTML = `<p>${this.config.cookies.message}</p>`;
+        cover.appendChild(div);
     }
 
     setPlayerConsent() {

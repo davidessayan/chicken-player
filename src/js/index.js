@@ -114,6 +114,12 @@ const defaultConfig = {
     eventConsent: 'chickenPlayer.cookies.consent',
     eventReject: 'chickenPlayer.cookies.reject',
     types: ['youtube', 'dailymotion', 'vimeo']
+  },
+
+  /* Accessibility */
+  a11y: {
+    playLabel: 'Lire la vidéo',
+    closeLabel: 'Fermer la vidéo',
   }
 };
 
@@ -261,6 +267,7 @@ class ChickenPlayer {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = this.config.classes.button;
+    button.setAttribute('aria-label', this.config.a11y.playLabel);
 
     const icon = document.createElement('span');
     icon.className = this.config.classes.buttonIcon;
@@ -313,6 +320,7 @@ class ChickenPlayer {
 
       // Close button click handler
       if (close) {
+        close.setAttribute('aria-label', this.config.a11y.closeLabel);
         close.addEventListener('click', () => {
           el.classList.remove(this.config.classes.statePlaying);
           this.handleStop(type, id);

@@ -218,6 +218,8 @@ Vous pouvez donc modifier la valeur de `padding-bottom` pour modifier son ratio,
 | `picture.src` | string | URL de l'image de couverture | `https://unpkg.com/chicken-player/dist/placeholder.png` |
 | `picture.width` | number | Largeur de l'image de couverture | 600 |
 | `picture.height` | number | Hauteur de l'image de couverture | 400 |
+| `a11y.playLabel` | string | Valeur de l'`aria-label` du bouton Play | `'Lire la vidéo'` |
+| `a11y.closeLabel` | string | Valeur de l'`aria-label` du bouton Close | `'Fermer la vidéo'` |
 
 ### Options spécifiques par plateforme
 
@@ -408,13 +410,28 @@ Pour déclencher les événements de consentement, vous pouvez utiliser le syst�
 
 ```javascript
 // Consentement global
-document.dispatchEvent(new Event('chickenPlayer.cookies.consent'));
-document.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
+window.dispatchEvent(new Event('chickenPlayer.cookies.consent'));
+window.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
 
 // Consentement spécifique à YouTube (si défini)
-document.dispatchEvent(new Event('votre.evenement.consent'));
-document.dispatchEvent(new Event('votre.evenement.reject'));
+window.dispatchEvent(new Event('votre.evenement.consent'));
+window.dispatchEvent(new Event('votre.evenement.reject'));
 ```
+## Accessibilité (a11y)
+
+Les boutons Play et Close exposent chacun un `aria-label` pour les technologies d'assistance. Les valeurs par défaut sont en français et peuvent être personnalisées via la clé `a11y` des options.
+
+```javascript
+const player = new ChickenPlayer({
+  a11y: {
+    playLabel: 'Play video',   // aria-label du bouton Play
+    closeLabel: 'Close video', // aria-label du bouton Close
+  }
+});
+```
+
+> **Note :** L'`aria-label` du bouton Close est appliqué dynamiquement lors de la détection de l'élément portant la classe `player-close` dans le DOM.
+
 ## Licence
 
 GNU GPL v3 © David Essayan
