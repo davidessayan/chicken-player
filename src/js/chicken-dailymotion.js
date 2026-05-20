@@ -31,18 +31,15 @@ class ChickenDailymotion extends ChickenPlayerBase {
    */
   createPlayer(uid, id) {
     if (!this.videos[uid]) {
+      const { playerId: _, ...dmOptions } = this.config.player.dailymotion;
       dailymotion
-        .createPlayer(uid, {
-          ...{
-            video: id
-          },
-          ...this.config.player.dailymotion
-        })
+        .createPlayer(uid, { video: id, ...dmOptions })
         .then((player) => {
           this.videos[uid] = player;
           this.onPlayerReady(uid);
           this.onPlayerStateChange(uid);
-        });
+        })
+        .catch((err) => console.error('Dailymotion player error:', err));
     }
   }
 }

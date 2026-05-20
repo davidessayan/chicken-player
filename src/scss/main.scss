@@ -98,12 +98,18 @@
             transform: translate(-50%, -50%);
             text-align: center;
             font-size: 0.875rem;
-            font-weight: normal;
-            font-family: sans-serif;
-            color: white;
-            padding: 1rem;
-            max-width: 25rem;
-            line-height: 1.2;
+            font-weight: 500;
+            font-family: system-ui, -apple-system, sans-serif;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            max-width: 22rem;
+            width: calc(100% - 2rem);
+            line-height: 1.55;
         }
     }
 

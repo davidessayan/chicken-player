@@ -14,10 +14,7 @@ class ChickenHtml5 extends ChickenPlayerBase {
      */
     initApi() {
         this.apiReady = true;
-        this.attemptPlayer(
-            this.tempPlayerUid,
-            this.tempPlayerId
-        );
+        this.flushPendingPlayers();
     }
 
     /**
@@ -42,8 +39,10 @@ class ChickenHtml5 extends ChickenPlayerBase {
             video.height = html5Config.height;
 
             // Set attributes
-            video.setAttribute('playsinline', '');
-            video.setAttribute('webkit-playsinline', '');
+            if (html5Config.playsinline) {
+                video.setAttribute('playsinline', '');
+                video.setAttribute('webkit-playsinline', '');
+            }
             if (html5Config.poster) {
                 video.setAttribute('poster', html5Config.poster);
             }
@@ -84,7 +83,7 @@ class ChickenHtml5 extends ChickenPlayerBase {
      * @returns {string} Video MIME type
      */
     getVideoType(url) {
-        const extension = url.split('.').pop().toLowerCase();
+        const extension = url.split('?')[0].split('.').pop().toLowerCase();
         const types = {
             'mp4': 'video/mp4',
             'webm': 'video/webm',
@@ -100,6 +99,7 @@ class ChickenHtml5 extends ChickenPlayerBase {
      * @param {string} uid - Player unique ID
      */
     stopPlayer(uid) {
+        if (!this.videos[uid]) return;
         const player = document.querySelector(`#${uid}`);
         player.dispatchEvent(this.config.events.stop);
         this.videos[uid].pause();
@@ -110,9 +110,10 @@ class ChickenHtml5 extends ChickenPlayerBase {
      * @param {string} uid - Player unique ID
      */
     startPlayer(uid) {
+        if (!this.videos[uid]) return;
         const player = document.querySelector(`#${uid}`);
         player.dispatchEvent(this.config.events.play);
-        this.videos[uid].play();
+        this.videos[uid].play().catch(() => {});
     }
 
     /**

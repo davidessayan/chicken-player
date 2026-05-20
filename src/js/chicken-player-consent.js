@@ -10,7 +10,7 @@ class ChickenPlayerConsent {
         this.config = config;
         this.playerType = playerType;
 
-        this.wrapper = document.querySelector(`.${config.classes.wrapper}`);;
+        this.wrapper = document.querySelector(`.${config.classes.wrapper}.player--${playerType}`);
 
         this.setPlayerConsent();
 
@@ -35,6 +35,7 @@ class ChickenPlayerConsent {
     }
 
     setWrapperState() {
+        if (!this.wrapper) return;
         if (this.consentState) {
             this.wrapper.classList.remove(this.config.classes.needConsent);
         } else {
@@ -43,6 +44,7 @@ class ChickenPlayerConsent {
     }
 
     setConsentMessage() {
+        if (!this.wrapper) return;
         const cover = this.wrapper.querySelector(`.${this.config.classes.cover}`);
         if (!cover) return;
 

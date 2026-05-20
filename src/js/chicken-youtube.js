@@ -36,17 +36,14 @@ class ChickenYoutube extends ChickenPlayerBase {
   createPlayer(uid, id) {
     if (!this.videos[uid]) {
       this.videos[uid] = new YT.Player(uid, {
-        ...{
-          height: this.config.player.height,
-          width: this.config.player.width,
-          videoId: id,
-          host: this.config.player.youtube.host,
-          events: {
-            onReady: () => this.onPlayerReady(uid),
-            onStateChange: (event) => this.onYouTubeStateChange(uid, event)
-          }
-        },
-        ...this.config.player.youtube
+        ...this.config.player.youtube,
+        height: this.config.player.height,
+        width: this.config.player.width,
+        videoId: id,
+        events: {
+          onReady: () => this.onPlayerReady(uid),
+          onStateChange: (event) => this.onYouTubeStateChange(uid, event)
+        }
       });
     }
   }

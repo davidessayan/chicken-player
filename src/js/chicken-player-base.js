@@ -9,11 +9,9 @@ class ChickenPlayerBase {
     constructor() {
         this.apiReady = false;
         this.apiLoading = false;
-        this.tempPlayerUid = null;
-        this.tempPlayerId = null;
         this.pendingPlayers = [];
-        this.videos = [];
-        this.timers = [];
+        this.videos = {};
+        this.timers = {};
         this.config = {};
     }
 
@@ -30,8 +28,6 @@ class ChickenPlayerBase {
         };
 
         if (!this.apiReady) {
-            this.tempPlayerUid = uid;
-            this.tempPlayerId = id;
             this.queuePlayer(uid, id);
 
             if (!this.apiLoading) {
@@ -105,9 +101,7 @@ class ChickenPlayerBase {
      */
     attemptPlayer(uid, id) {
         if (this.videos[uid]) {
-            setTimeout(() => {
-                this.startPlayer(uid);
-            }, 1500);
+            this.startPlayer(uid);
         } else {
             this.createPlayer(uid, id);
         }
@@ -118,6 +112,7 @@ class ChickenPlayerBase {
      * @param {string} uid - Player unique ID
      */
     stopPlayer(uid) {
+        if (!this.videos[uid]) return;
         document.querySelector(`#${uid}`).dispatchEvent(this.config.events.stop);
         this.videos[uid].pause();
     }
@@ -127,8 +122,10 @@ class ChickenPlayerBase {
      * @param {string} uid - Player unique ID
      */
     startPlayer(uid) {
+        if (!this.videos[uid]) return;
         document.querySelector(`#${uid}`).dispatchEvent(this.config.events.play);
-        this.videos[uid].play();
+        const result = this.videos[uid].play();
+        if (result instanceof Promise) result.catch(() => {});
     }
 
     /**

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chicken Player — playground</title>
+  <title>chicken-player — playground</title>
   <style>
     * {
       box-sizing: border-box;
@@ -56,19 +56,21 @@
       color: #9ca3af;
     }
 
+    header a {
+      color: #6b7280;
+      text-decoration: none;
+    }
+
+    header a:hover {
+      color: #111;
+    }
+
     /* ── Boutons ── */
     .controls {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: .5rem;
-    }
-
-    .controls-sep {
-      width: 1px;
-      height: 1.5rem;
-      background: #e5e7eb;
-      margin: 0 .25rem;
     }
 
     button {
@@ -109,11 +111,24 @@
       background: #fef2f2;
     }
 
+    /* ── Code ── */
+    pre {
+      background: #18181b;
+      color: #e4e4e7;
+      padding: .85rem 1rem;
+      border-radius: .5rem;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: .72rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      tab-size: 2;
+    }
+
     /* ── Grille des lecteurs ── */
     .players-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
+      grid-template-columns: 1fr;
+      gap: 1.5rem 1.25rem;
     }
 
     .player-card {
@@ -138,20 +153,24 @@
       text-transform: uppercase;
     }
 
-    .badge-yt { background: #fee2e2; color: #dc2626; }
-    .badge-vm { background: #dbeafe; color: #2563eb; }
-    .badge-dm { background: #f3e8ff; color: #7c3aed; }
-    .badge-h5 { background: #dcfce7; color: #16a34a; }
+    .badge-yt {
+      background: #fee2e2;
+      color: #dc2626;
+    }
 
-    /* ── Responsive ── */
-    @media (max-width: 640px) {
-      .players-grid {
-        grid-template-columns: 1fr;
-      }
+    .badge-vm {
+      background: #dbeafe;
+      color: #2563eb;
+    }
 
-      .controls-sep {
-        display: none;
-      }
+    .badge-dm {
+      background: #f3e8ff;
+      color: #7c3aed;
+    }
+
+    .badge-h5 {
+      background: #dcfce7;
+      color: #16a34a;
     }
   </style>
 </head>
@@ -159,8 +178,8 @@
 <body>
 
   <header>
-    <h1>🐔 Chicken Player</h1>
-    <p>Un player vidéo qui ne pond pas de problèmes.</p>
+    <h1>🐔 chicken-player</h1>
+    <p>Un player vidéo qui ne pond pas de problèmes. · <a href="https://chickenplayer.creative-bones.com/docs" target="_blank" rel="noopener">Documentation</a> · <a href="https://github.com/davidessayan/chicken-player" target="_blank" rel="noopener">GitHub</a></p>
   </header>
 
   <div class="section">
@@ -168,10 +187,20 @@
     <div class="controls">
       <button class="primary" id="btn-consent">Consentir aux cookies</button>
       <button class="danger" id="btn-reject">Refuser les cookies</button>
-      <div class="controls-sep"></div>
-      <button id="btn-play">▶ Lire tout</button>
-      <button id="btn-stop">■ Stopper tout</button>
     </div>
+  </div>
+
+  <div class="section">
+    <span class="section-label">Initialisation</span>
+    <pre>import ChickenPlayer from 'chicken-player'
+
+new ChickenPlayer({
+  selector: '.chicken-player',
+  cookies: { active: true, types: ['youtube', 'vimeo', 'dailymotion'] },
+  player: {
+    dailymotion: { playerId: 'xa19h' },
+  },
+})</pre>
   </div>
 
   <div class="section">
@@ -182,8 +211,13 @@
         <span class="player-card-label">
           <span class="badge badge-yt">YouTube</span>
         </span>
-        <div class="chicken-player" data-type="youtube" data-id="IPfdLVxjJeo">
-          <img src="https://img.youtube.com/vi/IPfdLVxjJeo/maxresdefault.jpg" alt="YouTube">
+        <pre>&lt;div class="chicken-player"
+     data-type="youtube"
+     data-id="dQw4w9WgXcQ"&gt;
+  &lt;img src="cover.jpg" alt=""&gt;
+&lt;/div&gt;</pre>
+        <div class="chicken-player" data-type="youtube" data-id="dQw4w9WgXcQ">
+          <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="">
         </div>
       </div>
 
@@ -191,20 +225,32 @@
         <span class="player-card-label">
           <span class="badge badge-vm">Vimeo</span>
         </span>
-        <div class="chicken-player" data-type="vimeo" data-id="524933864"></div>
+        <pre>&lt;div class="chicken-player"
+     data-type="vimeo"
+     data-id="1071968720"&gt;
+&lt;/div&gt;</pre>
+        <div class="chicken-player" data-type="vimeo" data-id="1071968720"></div>
       </div>
 
       <div class="player-card">
         <span class="player-card-label">
           <span class="badge badge-dm">Dailymotion</span>
         </span>
-        <div class="chicken-player" data-type="dailymotion" data-id="x9k8k0y"></div>
+        <pre>&lt;div class="chicken-player"
+     data-type="dailymotion"
+     data-id="x8snguw"&gt;
+&lt;/div&gt;</pre>
+        <div class="chicken-player" data-type="dailymotion" data-id="x8snguw"></div>
       </div>
 
       <div class="player-card">
         <span class="player-card-label">
           <span class="badge badge-h5">HTML5</span>
         </span>
+        <pre>&lt;div class="chicken-player"
+     data-type="html5"
+     data-id="video.mp4"&gt;
+&lt;/div&gt;</pre>
         <div class="chicken-player" data-type="html5"
           data-id="https://examplefiles.org/files/video/mp4-example-video-download-full-hd-1920x1080.mp4"></div>
       </div>
@@ -215,11 +261,16 @@
   <script type="module">
     import ChickenPlayer from '../src/js/index.js';
 
-    const player = new ChickenPlayer({
+    new ChickenPlayer({
       selector: '.chicken-player',
       cookies: {
         active: true,
         types: ['youtube', 'vimeo', 'dailymotion'],
+      },
+      player: {
+        dailymotion: {
+          playerId: 'xa19h',
+        },
       },
     });
 
@@ -227,8 +278,6 @@
       window.dispatchEvent(new Event('chickenPlayer.cookies.consent'));
     document.getElementById('btn-reject').onclick = () =>
       window.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
-    document.getElementById('btn-play').onclick = () => player.play();
-    document.getElementById('btn-stop').onclick = () => player.stop();
   </script>
 
 </body>

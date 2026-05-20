@@ -1,4 +1,4 @@
-# 🐔 Chicken Player
+# 🐔 chicken-player
 
 > Un player vidéo qui ne pond pas de problèmes.
 
@@ -157,7 +157,7 @@ dailymotion: {
 ```js
 html5: {
   controls: true, preload: 'auto', autoplay: false, loop: false,
-  muted: false, poster: '', width: 'auto', height: 'auto',
+  muted: false, playsinline: false, poster: '', width: 'auto', height: 'auto',
 }
 ```
 
@@ -188,12 +188,14 @@ player.stop('#mon-player');
 
 ## Événements de lecture
 
-```js
-// Émis quand la lecture commence
-window.addEventListener('chickenPlayer.play', (e) => { /* ... */ });
+Les événements sont émis sur l'élément player et remontent jusqu'au `document`.
 
-// Émis quand la lecture s'arrête
-window.addEventListener('chickenPlayer.stop', (e) => { /* ... */ });
+```js
+document.addEventListener('chickenPlayer.play', (e) => { /* ... */ });
+document.addEventListener('chickenPlayer.stop', (e) => { /* ... */ });
+
+// Ciblage d'un player spécifique
+document.getElementById('mon-player').addEventListener('chickenPlayer.play', (e) => { /* ... */ });
 ```
 
 ---
@@ -228,12 +230,21 @@ window.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
 
 ### Avec tarte-aux-etrons
 
+Le service `chickenplayer` de [tarte-aux-etrons](https://www.npmjs.com/package/tarte-aux-etrons) gère le consentement et le câblage des événements automatiquement :
+
 ```js
-import { createTaE, youtube } from 'tarte-aux-etrons';
+import { createTaE, chickenplayer } from 'tarte-aux-etrons';
 
-createTaE({ services: [youtube()] });
+createTaE({
+  services: [chickenplayer()],
+});
+```
 
-// tarte-aux-etrons émet ses propres événements — câblez-les avec cookies.eventConsent
+```js
+// Côté player — aucune config cookies nécessaire, tout est géré par TAE
+const player = new ChickenPlayer({
+  cookies: { active: true, types: ['youtube', 'vimeo', 'dailymotion'] },
+});
 ```
 
 ### Options de consentement

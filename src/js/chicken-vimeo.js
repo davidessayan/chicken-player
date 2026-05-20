@@ -28,12 +28,10 @@ class ChickenVimeo extends ChickenPlayerBase {
   createPlayer(uid, id) {
     if (!this.videos[uid]) {
       this.videos[uid] = new Vimeo.Player(uid, {
-        ...{
-          height: this.config.player.height,
-          width: this.config.player.width,
-          id: id
-        },
-        ...this.config.player.vimeo
+        ...this.config.player.vimeo,
+        height: this.config.player.height,
+        width: this.config.player.width,
+        id,
       });
 
       this.onPlayerReady(uid);

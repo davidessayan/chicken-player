@@ -103,14 +103,14 @@ const defaultConfig = {
 
   /* Events */
   events: {
-    play: new Event('chickenPlayer.play'),
-    stop: new Event('chickenPlayer.stop'),
+    play: new Event('chickenPlayer.play', { bubbles: true }),
+    stop: new Event('chickenPlayer.stop', { bubbles: true }),
   },
 
   /* Cookie Consent */
   cookies: {
     active: false,
-    message: 'Pour regarder cette vidéo, veuillez accepter les cookies du lecteur vidéo dans vos préférences de confidentialité.',
+    message: 'Acceptez les cookies pour regarder cette vidéo.',
     eventConsent: 'chickenPlayer.cookies.consent',
     eventReject: 'chickenPlayer.cookies.reject',
     types: ['youtube', 'dailymotion', 'vimeo']
@@ -133,7 +133,6 @@ class ChickenPlayer {
    */
   constructor(opts = {}) {
     this.config = this.mergeConfig(defaultConfig, opts);
-    this.players = new Map(); // Track player instances
 
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       this.init();
@@ -171,18 +170,18 @@ class ChickenPlayer {
   mergeConfig(defaultConfig, userConfig) {
     const merged = { ...defaultConfig };
 
-    for (const key in userConfig) {
-      if (userConfig.hasOwnProperty(key)) {
-        if (
-          typeof userConfig[key] === 'object' &&
-          userConfig[key] !== null &&
-          typeof defaultConfig[key] === 'object' &&
-          defaultConfig[key] !== null
-        ) {
-          merged[key] = this.mergeConfig(defaultConfig[key], userConfig[key]);
-        } else {
-          merged[key] = userConfig[key];
-        }
+    for (const key of Object.keys(userConfig)) {
+      if (
+        typeof userConfig[key] === 'object' &&
+        userConfig[key] !== null &&
+        !Array.isArray(userConfig[key]) &&
+        typeof defaultConfig[key] === 'object' &&
+        defaultConfig[key] !== null &&
+        !Array.isArray(defaultConfig[key])
+      ) {
+        merged[key] = this.mergeConfig(defaultConfig[key], userConfig[key]);
+      } else {
+        merged[key] = userConfig[key];
       }
     }
 
@@ -200,7 +199,7 @@ class ChickenPlayer {
 
     if (!uid) {
       // Generate a unique ID with chickenPlayer_ prefix
-      uid = 'chickenPlayer_' + Math.random().toString(36).substr(2, 9);
+      uid = 'chickenPlayer_' + Math.random().toString(36).slice(2, 11);
       el.setAttribute('id', uid);
     }
 
