@@ -1,443 +1,276 @@
-# Chicken Player
+# 🐔 Chicken Player
 
-![Chicken Player Logo](https://github.com/davidessayan/chicken-player/blob/main/logo.png?raw=true)
+> Un player vidéo qui ne pond pas de problèmes.
 
-Un plugin JavaScript léger et flexible pour l'intégration de vidéos YouTube, Vimeo, Dailymotion et HTML5 dans vos projets web.
+Une lib JavaScript légère, sans dépendances, framework-agnostic, pour intégrer YouTube, Vimeo, Dailymotion et HTML5 dans vos projets web.
 
-## Installation basique
+[![npm](https://img.shields.io/npm/v/chicken-player)](https://www.npmjs.com/package/chicken-player)
+[![license](https://img.shields.io/npm/l/chicken-player)](./LICENSE)
 
-### Via NPM
+[📖 Documentation](https://chickenplayer.creative-bones.com/docs) · [🛝 Playground](https://chickenplayer.creative-bones.com)
+
+---
+
+## Pourquoi ?
+
+Parce que les players vidéo, c'est souvent lourd, opaque, et difficile à brancher sur un système de consentement.
+
+`chicken-player` est léger, zéro dépendance runtime, 100% CSS pour le sizing, et s'intègre naturellement avec n'importe quel gestionnaire de consentement (ou avec [tarte-aux-etrons](https://www.npmjs.com/package/tarte-aux-etrons) 💩).
+
+---
+
+## Installation
 
 ```bash
 npm install chicken-player
+# ou
+pnpm add chicken-player
+# ou
+yarn add chicken-player
 ```
 
-Puis : 
-
 ```js
-import ChickenPlayer from "chicken-player";
-import "chicken-player/style";
+import ChickenPlayer from 'chicken-player';
+import 'chicken-player/style';
 ```
 
 ### Via CDN
 
 ```html
-<!-- CSS -->
 <link rel="stylesheet" href="https://unpkg.com/chicken-player/dist/chicken-player.css">
-
-<!-- JavaScript -->
 <script src="https://unpkg.com/chicken-player/dist/chicken-player.umd.js"></script>
 ```
 
-## Utilisation
+---
 
-### Exemple basique
+## Démarrage rapide
 
 ```html
-<!-- HTML -->
-<div class="chicken-player" data-type="youtube" data-id="VIDEO_ID"></div>
+<div class="chicken-player" data-type="youtube" data-id="dQw4w9WgXcQ"></div>
 
-<!-- JavaScript -->
 <script>
   const player = new ChickenPlayer();
 </script>
 ```
 
-### Exemple avec configuration personnalisée
+C'est tout. Le player 🐔 s'affiche, la miniature est chargée, la vidéo se lit au clic.
 
-```html
-<!-- HTML -->
-<div class="chicken-player" data-type="vimeo" data-id="VIDEO_ID"></div>
+---
 
-<!-- JavaScript -->
-<script>
-  const player = new ChickenPlayer({
-    selector: '.chicken-player',
-    player: {
-      vimeo: {
-        muted: true,
-        loop: true
-      }
-    },
-    picture: {
-      src: 'path/to/thumbnail.jpg'
-    }
-  });
-</script>
-```
+## Plateformes supportées
+
+| Plateforme | `data-type` | `data-id` |
+|---|---|---|
+| YouTube | `youtube` | ID de la vidéo (`dQw4w9WgXcQ`) |
+| Vimeo | `vimeo` | ID de la vidéo (`123456789`) |
+| Dailymotion | `dailymotion` | ID de la vidéo (`x9k8k0y`) |
+| HTML5 | `html5` | URL du fichier vidéo |
+
+---
 
 ## Image de couverture
 
-Chicken Player vous offre plusieurs méthodes pour définir l'image de couverture qui s'affiche avant la lecture de la vidéo.
+Trois façons de définir la miniature affichée avant lecture :
 
-### Méthode 1 : Désactiver les images par défaut
+### Méthode 1 — Image dans le HTML (prioritaire)
 
-Définissez `picture: false` pour désactiver complètement la génération d'images par défaut :
-
-```javascript
-const player = new ChickenPlayer({
-  picture: false
-});
+```html
+<div class="chicken-player" data-type="youtube" data-id="dQw4w9WgXcQ">
+  <img src="ma-miniature.jpg" alt="Ma vidéo">
+</div>
 ```
 
-Avec cette configuration, aucune image ne sera générée automatiquement, sauf si une image est présente dans le HTML. Si aucune image n'est trouvée dans le HTML et que `picture` est `false`, aucun élément image ne sera créé.
+### Méthode 2 — Image par défaut globale
 
-### Méthode 2 : Image par défaut (configuration globale)
-
-Utilisez l'option `picture.src` dans la configuration pour définir une image de couverture par défaut pour tous les players :
-
-```javascript
+```js
 const player = new ChickenPlayer({
   picture: {
     src: 'https://example.com/thumbnail.jpg',
     width: 600,
-    height: 400
-  }
+    height: 400,
+  },
 });
 ```
 
-### Méthode 3 : Image personnalisée dans le HTML
+### Méthode 3 — Désactiver les miniatures
 
-Placez directement une balise `<img>` dans votre div d'origine. Cette image sera automatiquement déplacée vers l'élément de couverture du player :
-
-```html
-<!-- Avec une image personnalisée -->
-<div class="chicken-player" data-type="youtube" data-id="VIDEO_ID">
-  <img src="https://example.com/my-thumbnail.jpg" alt="Ma vidéo" width="600" height="400">
-</div>
-
-<!-- Avec une image responsive -->
-<div class="chicken-player" data-type="vimeo" data-id="VIDEO_ID">
-  <img src="https://example.com/my-thumbnail.jpg" alt="Ma vidéo" style="width: 100%; height: auto;">
-</div>
+```js
+const player = new ChickenPlayer({ picture: false });
 ```
 
-**Avantages de cette méthode :**
-- L'image est définie directement dans le HTML, facilitant la gestion côté serveur
-- Tous les attributs de l'image (src, alt, width, height, style, etc.) sont préservés
-- Permet d'avoir des images différentes pour chaque player
-- Compatible avec les systèmes de gestion de contenu (CMS)
+**Priorité :** HTML > config > aucune image.
 
-### Priorité des méthodes
+---
 
-1. **Image dans le HTML** : Si une balise `<img>` est présente dans le div d'origine, elle sera utilisée en priorité
-2. **Image par défaut** : Si aucune image n'est trouvée dans le HTML et que `picture` n'est pas `false`, l'image définie dans `picture.src` sera utilisée
-3. **Aucune image** : Si `picture: false` et aucune image dans le HTML, aucun élément image ne sera généré
+## Apparence & Dimensions
 
-### Exemple complet
-
-```html
-<!-- HTML -->
-<div class="chicken-player" data-type="youtube" data-id="dQw4w9WgXcQ">
-  <img src="https://example.com/thumbnail.jpg" alt="Rick Astley - Never Gonna Give You Up">
-</div>
-
-<div class="chicken-player" data-type="vimeo" data-id="123456789">
-  <!-- Pas d'image dans le HTML, utilisera l'image par défaut -->
-</div>
-
-<div class="chicken-player" data-type="dailymotion" data-id="x123456">
-  <!-- Pas d'image dans le HTML, aucune image ne sera générée -->
-</div>
-
-<!-- JavaScript -->
-<script>
-  const player = new ChickenPlayer({
-    picture: {
-      src: 'https://default-thumbnail.jpg', // Image par défaut
-      width: 600,
-      height: 400
-    }
-  });
-</script>
-```
-
-### Exemple avec picture: false
-
-```html
-<!-- HTML -->
-<div class="chicken-player" data-type="youtube" data-id="dQw4w9WgXcQ">
-  <img src="https://example.com/thumbnail.jpg" alt="Rick Astley - Never Gonna Give You Up">
-</div>
-
-<div class="chicken-player" data-type="vimeo" data-id="123456789">
-  <!-- Pas d'image dans le HTML, aucune image ne sera générée -->
-</div>
-
-<!-- JavaScript -->
-<script>
-  const player = new ChickenPlayer({
-    picture: false // Désactive les images par défaut
-  });
-</script>
-```
-
-## Apparence & Dimensions du player
-
-Contrairement à ce que nous pourrions penser, les attributs `width` et `height` ne permettent pas de modifier l'apparence du player, mais seulement les attributs intrinsèques (ex: attributs de l'iframe).
-
-ChickenPlayer est conçu de manière à ce que l'intégralité de son apparence soit modifiable en CSS.
-
-Ainsi pour modifier ses dimensions, il suffira d'éditer les styles de la classe `.cbo-chickenplayer`.
-
-Par défaut, elle est définie ainsi : 
+L'intégralité de l'apparence est contrôlée par CSS. Pour modifier les dimensions, surchargez `.cbo-chickenplayer` :
 
 ```css
 .cbo-chickenplayer {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  padding-bottom: 56.25%;
-  background: black;
+  padding-bottom: 56.25%; /* ratio 16:9 par défaut */
 }
 ```
 
-Vous pouvez donc modifier la valeur de `padding-bottom` pour modifier son ratio, ou utiliser d'autres propriétés selon votre convenance ;)
+---
 
 ## Configuration
 
 ### Options principales
 
-| Option | Type | Description | Par défaut |
-|--------|------|-------------|------------|
-| `selector` | string | Sélecteur CSS pour les éléments player | `.chicken-player` |
-| `player.width` | number | Largeur intrinsèque du player | 600 |
-| `player.height` | number | Hauteur intrinsèque du player | 400 |
-| `classes.wrapper` | string | Classe CSS du wrapper | `cbo-chickenplayer` |
-| `classes.object` | string | Classe CSS de la cible du lecteur | `player-object` |
-| `classes.cover` | string | Classe CSS de la couverture | `player-cover` |
-| `classes.button` | string | Classe CSS du bouton | `cover-button` |
-| `classes.buttonIcon` | string | Classe CSS de l'icône du bouton | `button-icon` |
-| `classes.buttonSpinner` | string | Classe CSS du spinner | `button-spinner` |
-| `classes.close` | string | Classe CSS du bouton de fermeture | `player-close` |
-| `classes.statePlaying` | string | Classe CSS de l'état lecture | `player--playing` |
-| `classes.stateLoading` | string | Classe CSS de l'état chargement | `player--loading` |
-| `classes.stateError` | string | Classe CSS de l'état erreur | `player--error` |
-| `classes.stateReady` | string | Classe CSS de l'état prêt | `player--ready` |
-| `picture` | boolean\|object | Configuration de l'image de couverture. `false` pour désactiver | `{src: '...', width: 600, height: 400}` |
-| `picture.src` | string | URL de l'image de couverture | `https://unpkg.com/chicken-player/dist/placeholder.png` |
-| `picture.width` | number | Largeur de l'image de couverture | 600 |
-| `picture.height` | number | Hauteur de l'image de couverture | 400 |
-| `a11y.playLabel` | string | Valeur de l'`aria-label` du bouton Play | `'Lire la vidéo'` |
-| `a11y.closeLabel` | string | Valeur de l'`aria-label` du bouton Close | `'Fermer la vidéo'` |
+| Option | Type | Défaut | Description |
+|---|---|---|---|
+| `selector` | string | `.chicken-player` | Sélecteur CSS des éléments player |
+| `picture` | boolean\|object | `{src, width, height}` | Config de la miniature. `false` pour désactiver |
+| `picture.src` | string | placeholder CDN | URL de l'image par défaut |
+| `a11y.playLabel` | string | `'Lire la vidéo'` | `aria-label` du bouton Play |
+| `a11y.closeLabel` | string | `'Fermer la vidéo'` | `aria-label` du bouton Close |
 
-### Options spécifiques par plateforme
+### Options par plateforme
 
 #### YouTube
-```javascript
+
+```js
 youtube: {
   host: 'https://www.youtube-nocookie.com',
-  playerVars: {
-    modestbranding: 1,
-    showinfo: 0,
-    controls: 1,
-    iv_load_policy: 3,
-    fs: 1,
-    rel: 0,
-    loop: 0,
-    mute: 0
-  }
+  playerVars: { modestbranding: 1, controls: 1, rel: 0, loop: 0, mute: 0 },
 }
 ```
 
 #### Vimeo
-```javascript
-vimeo: {
-  muted: false,
-  loop: false
-}
+
+```js
+vimeo: { muted: false, loop: false }
 ```
 
 #### Dailymotion
-```javascript
+
+```js
 dailymotion: {
   playerId: null,
-  params: {
-    startTime: 0,
-    scaleMode: 'fit',
-    loop: false,
-    mute: false
-  }
+  params: { startTime: 0, scaleMode: 'fit', loop: false, mute: false },
 }
 ```
 
 #### HTML5
-```javascript
+
+```js
 html5: {
-  controls: true,
-  preload: 'auto',
-  playsinline: false,
-  autoplay: false,
-  loop: false,
-  muted: false,
-  poster: '',
-  width: 'auto',
-  height: 'auto',
-  crossorigin: '',
-  disablePictureInPicture: false,
-  disableRemotePlayback: false,
-  controlsList: ''
+  controls: true, preload: 'auto', autoplay: false, loop: false,
+  muted: false, poster: '', width: 'auto', height: 'auto',
 }
 ```
 
+---
+
 ## API JavaScript
 
-### Méthodes disponibles
+### `play(selector?)`
 
-#### `play(selector)`
-Lance la lecture de tous les lecteurs ou d'un lecteur spécifique.
+Lance la lecture de tous les players ou d'un player ciblé.
 
-**Paramètres :**
-- `selector` (string, optionnel) : Sélecteur CSS pour cibler un lecteur spécifique
-
-**Exemples :**
-```javascript
-const player = new ChickenPlayer();
-
-// Lancer tous les lecteurs
-player.play();
-
-// Lancer un lecteur spécifique
-player.play('#my-video-player');
-player.play('.youtube-player');
+```js
+player.play();                    // tous les players
+player.play('#mon-player');       // un player spécifique
+player.play('.youtube-player');   // par sélecteur CSS
 ```
 
-#### `stop(selector)`
-Arrête tous les lecteurs ou un lecteur spécifique.
+### `stop(selector?)`
 
-**Paramètres :**
-- `selector` (string, optionnel) : Sélecteur CSS pour cibler un lecteur spécifique
+Arrête tous les players ou un player ciblé.
 
-**Exemples :**
-```javascript
-const player = new ChickenPlayer();
-
-// Arrêter tous les lecteurs
+```js
 player.stop();
-
-// Arrêter un lecteur spécifique
-player.stop('#my-video-player');
-player.stop('.vimeo-player');
+player.stop('#mon-player');
 ```
 
-### Exemple d'utilisation complète
-
-```javascript
-// Créer une instance
-const myPlayer = new ChickenPlayer({
-  selector: '.chicken-player',
-  player: {
-    youtube: {
-      playerVars: {
-        autoplay: 0,
-        controls: 1
-      }
-    }
-  }
-});
-
-// Contrôler les lecteurs programmatiquement
-document.getElementById('play-all').addEventListener('click', () => {
-  myPlayer.play();
-});
-
-document.getElementById('stop-all').addEventListener('click', () => {
-  myPlayer.stop();
-});
-
-document.getElementById('play-first').addEventListener('click', () => {
-  myPlayer.play('.chicken-player:first-child');
-});
-```
+---
 
 ## Événements de lecture
 
-Le player émet deux événements personnalisés :
-- `chickenPlayer.play` : Émis lorsque la lecture commence
-- `chickenPlayer.stop` : Émis lorsque la lecture s'arrête
+```js
+// Émis quand la lecture commence
+window.addEventListener('chickenPlayer.play', (e) => { /* ... */ });
 
+// Émis quand la lecture s'arrête
+window.addEventListener('chickenPlayer.stop', (e) => { /* ... */ });
+```
 
-## Gestion des cookies
+---
 
-Le player peut être configuré pour gérer le consentement des cookies de manière globale ou par type de player.
+## Gestion du consentement
 
-### Configuration
+Le player peut attendre le consentement avant de charger la vidéo. Compatible avec n'importe quel gestionnaire de cookies.
 
-#### Configuration globale
-```javascript
+### Configuration globale
+
+```js
 const player = new ChickenPlayer({
-    cookies: {
-        active: true,
-        message: 'Pour regarder cette vidéo, veuillez accepter les cookies du lecteur vidéo.',
-        eventConsent: 'chickenPlayer.cookies.consent',
-        eventReject: 'chickenPlayer.cookies.reject',
-        types: ['youtube', 'dailymotion', 'vimeo']
-    }
+  cookies: {
+    active: true,
+    message: 'Acceptez les cookies pour voir cette vidéo.',
+    eventConsent: 'chickenPlayer.cookies.consent',
+    eventReject: 'chickenPlayer.cookies.reject',
+    types: ['youtube', 'vimeo', 'dailymotion'],
+  },
 });
 ```
 
-#### Configuration par type de player
-```javascript
-const player = new ChickenPlayer({
-    player: {
-      youtube: {
-        cookies: {
-          active: true,
-          eventConsent: 'chickenPlayer.cookies.consent',
-          eventReject: 'chickenPlayer.cookies.reject',
-        }
-      }
-    }
-});
-```
+### Déclencher le consentement
 
-### Options disponibles
-
-| Option | Type | Description | Par défaut |
-|--------|------|-------------|------------|
-| `cookies.active` | boolean | Active/désactive la gestion des cookies | `false` |
-| `cookies.message` | string | Message affiché quand le consentement est nécessaire | `'Pour regarder cette vidéo...'` |
-| `cookies.eventConsent` | string | Événement global de consentement | `'chickenPlayer.cookies.consent'` |
-| `cookies.eventReject` | string | Événement global de refus | `'chickenPlayer.cookies.reject'` |
-| `cookies.types` | array | Types de players concernés | `['youtube', 'dailymotion', 'vimeo']` |
-| `cookies.player[type].needConsent` | boolean | Active/désactive le consentement pour un type spécifique | `undefined` |
-| `cookies.player[type].consentEvent` | string | Événement de consentement spécifique au type | `undefined` |
-| `cookies.player[type].rejectEvent` | string | Événement de refus spécifique au type | `undefined` |
-
-### Gestion des événements
-
-Pour déclencher les événements de consentement, vous pouvez utiliser le système d'événements natif de JavaScript :
-
-```javascript
-// Consentement global
+```js
+// Consentement accordé
 window.dispatchEvent(new Event('chickenPlayer.cookies.consent'));
+
+// Consentement refusé
 window.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
-
-// Consentement spécifique à YouTube (si défini)
-window.dispatchEvent(new Event('votre.evenement.consent'));
-window.dispatchEvent(new Event('votre.evenement.reject'));
 ```
-## Accessibilité (a11y)
 
-Les boutons Play et Close exposent chacun un `aria-label` pour les technologies d'assistance. Les valeurs par défaut sont en français et peuvent être personnalisées via la clé `a11y` des options.
+### Avec tarte-aux-etrons
 
-```javascript
+```js
+import { createTaE, youtube } from 'tarte-aux-etrons';
+
+createTaE({ services: [youtube()] });
+
+// tarte-aux-etrons émet ses propres événements — câblez-les avec cookies.eventConsent
+```
+
+### Options de consentement
+
+| Option | Type | Défaut | Description |
+|---|---|---|---|
+| `cookies.active` | boolean | `false` | Active la gestion du consentement |
+| `cookies.message` | string | `'Pour regarder...'` | Message affiché en attente de consentement |
+| `cookies.eventConsent` | string | `'chickenPlayer.cookies.consent'` | Événement de consentement |
+| `cookies.eventReject` | string | `'chickenPlayer.cookies.reject'` | Événement de refus |
+| `cookies.types` | array | `['youtube', 'dailymotion', 'vimeo']` | Plateformes concernées |
+
+---
+
+## Accessibilité
+
+Les boutons Play et Close exposent un `aria-label` personnalisable :
+
+```js
 const player = new ChickenPlayer({
   a11y: {
-    playLabel: 'Play video',   // aria-label du bouton Play
-    closeLabel: 'Close video', // aria-label du bouton Close
-  }
+    playLabel: 'Play video',
+    closeLabel: 'Close video',
+  },
 });
 ```
 
-> **Note :** L'`aria-label` du bouton Close est appliqué dynamiquement lors de la détection de l'élément portant la classe `player-close` dans le DOM.
+---
+
+## Roadmap
+
+- Mode playlist (enchaînement automatique)
+- Support Twitch
+- Événements par instance de player
+
+---
 
 ## Licence
 
 GNU GPL v3 © David Essayan
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. If not, see [https://www.gnu.org/licenses/].

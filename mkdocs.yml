@@ -1,0 +1,19 @@
+site_name: Chicken Player
+site_url: https://chickenplayer.creative-bones.com/docs/latest/
+repo_url: https://github.com/davidessayan/chicken-player
+repo_name: davidessayan/chicken-player
+docs_dir: docs
+
+theme:
+  name: material
+  language: fr
+  palette:
+    - scheme: default
+      primary: deep orange
+      accent: orange
+  features:
+    - navigation.instant
+    - navigation.top
+
+nav:
+  - Documentation: index.md
