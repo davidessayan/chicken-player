@@ -273,4 +273,4 @@ const player = new ChickenPlayer({
 
 ## Licence
 
-GNU GPL v3 © David Essayan
+MIT

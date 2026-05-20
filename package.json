@@ -6,12 +6,12 @@
     "module": "dist/chicken-player.es.js",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/davidessayan/chicken-player.git"
+        "url": "https://github.com/davidessayan/chicken-player.git"
     },
     "bugs": {
         "url": "https://github.com/davidessayan/chicken-player/issues"
     },
-    "homepage": "https://github.com/davidessayan/chicken-player#readme",
+    "homepage": "https://chickenplayer.creative-bones.com",
     "keywords": [
         "video",
         "player",
@@ -41,8 +41,12 @@
         "playground": "vite --config vite.playground.config.js",
         "build:playground": "vite build --config vite.playground.config.js"
     },
-    "author": "David Essayan",
-    "license": "GPL-3.0",
+    "author": {
+        "name": "David Essayan",
+        "email": "da.essayan@gmail.com",
+        "url": "https://github.com/davidessayan"
+    },
+    "license": "MIT",
     "devDependencies": {
         "@babel/core": "^7.24.0",
         "@babel/preset-env": "^7.24.0",
