@@ -5,7 +5,7 @@
 Une lib JavaScript légère, sans dépendances, framework-agnostic, pour intégrer YouTube, Vimeo, Dailymotion et HTML5 dans vos projets web.
 
 [![npm](https://img.shields.io/npm/v/chicken-player)](https://www.npmjs.com/package/chicken-player)
-[![license](https://img.shields.io/npm/l/chicken-player)](./LICENSE)
+[![license](https://img.shields.io/npm/l/chicken-player)](https://github.com/davidessayan/chicken-player/blob/main/LICENSE)
 
 [📖 Documentation](https://chickenplayer.creative-bones.com/docs) · [🛝 Playground](https://chickenplayer.creative-bones.com)
 
