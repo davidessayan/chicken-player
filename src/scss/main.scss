@@ -151,6 +151,13 @@
         }
     }
 
+    // Keyboard focus inside the media
+
+    &.player--focus {
+        outline: auto;
+        outline-offset: 0.125rem;
+    }
+
     // Need consent state
 
     &.player--needconsent {
@@ -168,6 +175,17 @@
     .cbo-chickenplayer {
         .cover-button:hover {
             transform: scale(1.1);
+        }
+    }
+}
+
+// The loading spinner is kept: it is a short, essential feedback
+
+@media (prefers-reduced-motion: reduce) {
+    .cbo-chickenplayer {
+        .player-cover,
+        .player-cover .cover-button {
+            transition: none;
         }
     }
 }

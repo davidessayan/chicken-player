@@ -125,6 +125,7 @@ L'intégralité de l'apparence est contrôlée par CSS. Pour modifier les dimens
 | `picture.src` | string | placeholder CDN | URL de l'image par défaut |
 | `a11y.playLabel` | string | `'Lire la vidéo'` | `aria-label` du bouton Play |
 | `a11y.closeLabel` | string | `'Fermer la vidéo'` | `aria-label` du bouton Close |
+| `a11y.titleFormat` | string | `'{label} : {title}'` | Intitulé des boutons quand le player a un `data-title` (voir la section Accessibilité) |
 
 ### Options par plateforme
 
@@ -167,7 +168,7 @@ html5: {
 
 ### `play(selector?)`
 
-Lance la lecture de tous les players ou d'un player ciblé.
+Lance la lecture de tous les players ou d'un player ciblé. Les players en attente de consentement sont ignorés : aucune vidéo n'est chargée avant l'accord.
 
 ```js
 player.play();                    // tous les players
@@ -228,6 +229,8 @@ window.dispatchEvent(new Event('chickenPlayer.cookies.consent'));
 window.dispatchEvent(new Event('chickenPlayer.cookies.reject'));
 ```
 
+Tant que le consentement n'est pas donné, ni le bouton Play ni la méthode `play()` ne chargent la vidéo.
+
 ### Avec tarte-aux-etrons
 
 Le service `chickenplayer` de [tarte-aux-etrons](https://www.npmjs.com/package/tarte-aux-etrons) gère le consentement et le câblage des événements automatiquement :
@@ -252,7 +255,7 @@ const player = new ChickenPlayer({
 | Option | Type | Défaut | Description |
 |---|---|---|---|
 | `cookies.active` | boolean | `false` | Active la gestion du consentement |
-| `cookies.message` | string | `'Pour regarder...'` | Message affiché en attente de consentement |
+| `cookies.message` | string | `'Acceptez les cookies pour regarder cette vidéo.'` | Message affiché en attente de consentement |
 | `cookies.eventConsent` | string | `'chickenPlayer.cookies.consent'` | Événement de consentement |
 | `cookies.eventReject` | string | `'chickenPlayer.cookies.reject'` | Événement de refus |
 | `cookies.types` | array | `['youtube', 'dailymotion', 'vimeo']` | Plateformes concernées |
@@ -261,6 +264,8 @@ const player = new ChickenPlayer({
 
 ## Accessibilité
 
+### Intitulés et titre de la vidéo
+
 Les boutons Play et Close exposent un `aria-label` personnalisable :
 
 ```js
@@ -268,9 +273,52 @@ const player = new ChickenPlayer({
   a11y: {
     playLabel: 'Play video',
     closeLabel: 'Close video',
+    titleFormat: '{label}: {title}',
   },
 });
 ```
+
+L'attribut `data-title` (facultatif) donne le titre de la vidéo. Il complète l'intitulé des boutons selon `a11y.titleFormat` et nomme le lecteur : `title` de l'iframe, `aria-label` de la balise `<video>`.
+
+```html
+<div class="chicken-player" data-type="youtube" data-id="dQw4w9WgXcQ" data-title="Never Gonna Give You Up"></div>
+<!-- Bouton Play : « Lire la vidéo : Never Gonna Give You Up » -->
+```
+
+Dès que la page contient plusieurs vidéos, renseignez `data-title` sur chacune : sans lui, tous les boutons Play portent le même intitulé.
+
+### Navigation au clavier
+
+- Au lancement depuis le bouton Play, le focus passe dans le lecteur (iframe YouTube, Vimeo, Dailymotion ou balise `<video>`) : Tab parcourt ses commandes.
+- Pendant la lecture, la couverture est rendue `inert` (retirée de la tabulation et des technologies d'assistance). À l'arrêt, c'est le lecteur qui devient `inert` et le focus revient sur le bouton Play.
+- Une iframe ne prend jamais `:focus-visible` : le focus clavier dans le lecteur est signalé par la classe `player--focus` (`classes.stateFocus`) sur le wrapper, stylée par défaut d'un `outline: auto`.
+
+### Sous-titres (HTML5)
+
+Les pistes `<track>` placées dans un `<template>` du player sont ajoutées à la balise `<video>` (une balise `<track>` directement dans la `<div>` serait du HTML invalide) :
+
+```html
+<div class="chicken-player" data-type="html5" data-id="video.mp4" data-title="Ma vidéo">
+  <img src="ma-miniature.jpg" alt="">
+  <template>
+    <track kind="captions" src="video-fr.vtt" srclang="fr" label="Français" default>
+    <track kind="captions" src="video-en.vtt" srclang="en" label="English">
+  </template>
+</div>
+```
+
+Si les fichiers `.vtt` sont sur un autre domaine que la vidéo, ce domaine doit autoriser le CORS et le player être configuré avec `player.html5.crossorigin: 'anonymous'`.
+
+Pour YouTube, Vimeo et Dailymotion, les sous-titres se gèrent sur la plateforme.
+
+### Animations réduites
+
+Avec la préférence système `prefers-reduced-motion: reduce`, la couverture et le bouton Play n'ont plus de transition. Le spinner de chargement est conservé : il est bref et indique un état.
+
+### Bonnes pratiques
+
+- Gardez `player.html5.controls: true` : sans commandes, la vidéo n'est plus pilotable au clavier (RGAA 4.11).
+- La transcription textuelle et l'audiodescription (RGAA 4.1, 4.2, 4.5 et 4.6) relèvent du contenu : placez par exemple un lien vers la transcription à côté du player.
 
 ---
 

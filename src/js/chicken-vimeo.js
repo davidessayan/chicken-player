@@ -34,8 +34,14 @@ class ChickenVimeo extends ChickenPlayerBase {
         id,
       });
 
-      this.onPlayerReady(uid);
-      this.onPlayerStateChange(uid);
+      // The iframe is created asynchronously (oEmbed): wait for it before starting
+      this.videos[uid]
+        .ready()
+        .then(() => {
+          this.onPlayerReady(uid);
+          this.onPlayerStateChange(uid);
+        })
+        .catch((err) => console.error('Vimeo player error:', err));
     }
   }
 }
