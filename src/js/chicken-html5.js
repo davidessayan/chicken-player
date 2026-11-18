@@ -68,6 +68,14 @@ class ChickenHtml5 extends ChickenPlayerBase {
             // Replace iframe with video element
             const iframe = document.querySelector(`#${uid}`);
             if (iframe) {
+                // Text tracks (captions, subtitles…) given in a <template> of the player markup
+                const template = iframe.parentNode.querySelector(':scope > template');
+                if (template) {
+                    template.content.querySelectorAll('track').forEach(track => {
+                        video.appendChild(track.cloneNode());
+                    });
+                }
+
                 iframe.parentNode.replaceChild(video, iframe);
             }
 

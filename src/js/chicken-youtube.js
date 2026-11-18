@@ -73,6 +73,7 @@ class ChickenYoutube extends ChickenPlayerBase {
    * @param {string} uid - Player unique ID
    */
   stopPlayer(uid) {
+    if (!this.videos[uid]) return;
     document.querySelector(`#${uid}`).dispatchEvent(this.config.events.stop);
     this.videos[uid].stopVideo();
   }

@@ -90,6 +90,7 @@ const defaultConfig = {
     stateLoading: 'player--loading',
     stateError: 'player--error',
     stateReady: 'player--ready',
+    stateFocus: 'player--focus',
     needConsent: 'player--needconsent',
     consentMessage: 'cover-needconsent'
   },
@@ -120,6 +121,7 @@ const defaultConfig = {
   a11y: {
     playLabel: 'Lire la vidéo',
     closeLabel: 'Fermer la vidéo',
+    titleFormat: '{label} : {title}',
   }
 };
 
@@ -210,7 +212,7 @@ class ChickenPlayer {
     // Create elements
     const object = this.createObject(uid);
     const cover = this.createCover(el);
-    const button = this.createButton();
+    const button = this.createButton(el.getAttribute('data-title'));
 
     // Assemble structure
     el.appendChild(object);
@@ -259,14 +261,30 @@ class ChickenPlayer {
   }
 
   /**
+   * Add the video title to a button label
+   * @param {string} label - Button label
+   * @param {string|null} title - Video title (data-title)
+   * @returns {string} Label
+   */
+  formatLabel(label, title) {
+    if (!title) return label;
+
+    // Replacer functions keep "$" sequences of the title literal
+    return this.config.a11y.titleFormat
+      .replace('{label}', () => label)
+      .replace('{title}', () => title);
+  }
+
+  /**
    * Create the play button element
+   * @param {string|null} title - Video title (data-title)
    * @returns {HTMLElement} Button element
    */
-  createButton() {
+  createButton(title) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = this.config.classes.button;
-    button.setAttribute('aria-label', this.config.a11y.playLabel);
+    button.setAttribute('aria-label', this.formatLabel(this.config.a11y.playLabel, title));
 
     const icon = document.createElement('span');
     icon.className = this.config.classes.buttonIcon;
@@ -310,24 +328,94 @@ class ChickenPlayer {
       const type = el.getAttribute('data-type');
       const id = el.getAttribute('data-id');
       const uid = object.getAttribute('id');
+      const title = el.getAttribute('data-title');
 
       // Play button click handler
       play.addEventListener('click', () => {
+        // The button is only hidden by CSS while consent is pending
+        if (chickenPlayerConsent.isWaiting(el)) return;
+
         el.classList.add(this.config.classes.stateLoading);
         this.handlePlay(type, id, uid);
       });
 
       // Close button click handler
       if (close) {
-        close.setAttribute('aria-label', this.config.a11y.closeLabel);
+        close.setAttribute('aria-label', this.formatLabel(this.config.a11y.closeLabel, title));
         close.addEventListener('click', () => {
           el.classList.remove(this.config.classes.statePlaying);
-          this.handleStop(type, id);
+          this.handleStop(type, uid);
+        });
+      }
+
+      this.bindFocus(el, uid, play);
+
+      // Name the media once the provider has created it
+      if (title) {
+        el.addEventListener(this.config.events.play.type, () => {
+          const target = this.getMediaTarget(uid);
+          if (target) target.setAttribute(target.matches('video') ? 'aria-label' : 'title', title);
         });
       }
 
       // Mark wrapper as ready to prevent re-initialization
       el.classList.add(this.config.classes.stateReady);
+    });
+  }
+
+  /**
+   * Get the focusable element of the media (iframe or video)
+   * @param {string} uid - Player unique ID
+   * @returns {HTMLElement|null} Media element
+   */
+  getMediaTarget(uid) {
+    // The provider may have replaced the object element, so it is queried each time
+    const media = document.getElementById(uid);
+    if (!media) return null;
+
+    return media.matches('iframe, video') ? media : media.querySelector('iframe, video');
+  }
+
+  /**
+   * Keep keyboard focus on the visible layer: the media while playing, the cover otherwise
+   * @param {HTMLElement} el - Player wrapper
+   * @param {string} uid - Player unique ID
+   * @param {HTMLElement} play - Play button
+   */
+  bindFocus(el, uid, play) {
+    const cover = el.querySelector(`.${this.config.classes.cover}`);
+
+    el.addEventListener(this.config.events.play.type, () => {
+      const media = document.getElementById(uid);
+      if (!media) return;
+
+      media.inert = false;
+      if (cover.contains(document.activeElement)) {
+        const keyboard = document.activeElement.matches(':focus-visible');
+        const target = this.getMediaTarget(uid);
+
+        if (target) {
+          target.focus({ preventScroll: true });
+
+          // An iframe never matches :focus-visible, so keyboard focus is shown on the wrapper
+          if (keyboard && document.activeElement === target) {
+            el.classList.add(this.config.classes.stateFocus);
+            target.addEventListener('blur', () => {
+              el.classList.remove(this.config.classes.stateFocus);
+            }, { once: true });
+          }
+        }
+      }
+      cover.inert = true;
+    });
+
+    el.addEventListener(this.config.events.stop.type, () => {
+      const media = document.getElementById(uid);
+      cover.inert = false;
+      if (!media) return;
+
+      if (media.contains(document.activeElement)) play.focus({ preventScroll: true });
+      media.inert = true;
     });
   }
 
@@ -368,9 +456,10 @@ class ChickenPlayer {
     players.forEach(playerEl => {
       const type = playerEl.getAttribute('data-type');
       const id = playerEl.getAttribute('data-id');
-      const object = playerEl.querySelector(`.${this.config.classes.object}`);
+      // Looked up by id: Dailymotion and HTML5 replace the object element without its class
+      const object = document.getElementById(`${playerEl.id}-object`);
 
-      if (type && id && object) {
+      if (type && id && object && !chickenPlayerConsent.isWaiting(playerEl)) {
         const uid = object.getAttribute('id');
         playerEl.classList.add(this.config.classes.stateLoading);
         this.handlePlay(type, id, uid);
@@ -388,7 +477,8 @@ class ChickenPlayer {
 
     players.forEach(playerEl => {
       const type = playerEl.getAttribute('data-type');
-      const object = playerEl.querySelector(`.${this.config.classes.object}`);
+      // Looked up by id: Dailymotion and HTML5 replace the object element without its class
+      const object = document.getElementById(`${playerEl.id}-object`);
 
       if (type && object) {
         const uid = object.getAttribute('id');
